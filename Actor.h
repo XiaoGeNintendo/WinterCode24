@@ -12,6 +12,10 @@ public:
 	vector<Actor*> children;
 	bool receiveMouseEvent = false;
 	Actor* parent = NULL;
+	SDL_Color color = { 255,255,255,255 };
+	bool flipX = false, flipY = false;
+	double rotation=0.0;
+	double rotateX=0.0, rotateY=0.0;
 
 	virtual void render(SDL_Renderer* renderer);
 	

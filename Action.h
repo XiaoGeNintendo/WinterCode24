@@ -16,6 +16,19 @@ enum InterpolationMethod {
 	SINE
 };
 template<typename T> class ActionInterpolation : public Action {
+private:
+
+	void update() {
+		switch (method) {
+		case LINAR:
+			ref = from + (to - from) / duration * now;
+			break;
+		case SINE:
+			ref = from + sin(1.0 * now / duration * 3.14159265 / 2) * (to - from);
+			break;
+		}
+	}
+
 public:
 	T& ref;
 	int now;
@@ -28,21 +41,10 @@ public:
 	ActionInterpolation(T& ref, int duration, T to, int method = LINAR) : ref(ref), now(0), duration(duration), from(ref), to(to), method(method) {}
 
 	void tick() {
-
-		T delta = to - from;
-
 		if (now < duration) {
 			now++;
 
-
-			switch (method) {
-			case LINAR:
-				ref = from + (to - from) / duration * now;
-				break;
-			case SINE:
-				ref = from + sin(1.0 * now / duration * 3.14159265 / 2) * (to - from) ;
-				break;
-			}
+			update();
 		}
 	}
 

@@ -70,7 +70,8 @@ void loadGame() {
 	st.addChild(logo);
 
 	actions.add(new ActionRepeatForever(new ActionInterpolation<int>(logo->x, 60, 200)));
-
+	actions.add(new ActionRepeatForever(new ActionInterpolation<Uint8>(logo->color.a, 30, 0, SINE)));
+	actions.add(new ActionRepeatForever(new ActionInterpolation<double>(logo->rotation, 90, 360)));
 	printf("Game Loaded!\n");
 }
 
