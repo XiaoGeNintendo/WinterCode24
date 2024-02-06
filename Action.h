@@ -40,7 +40,7 @@ public:
 				ref = from + (to - from) / duration * now;
 				break;
 			case SINE:
-				ref = from + (to - from) * sin(1.0 * now / duration * 3.14159265 / 2);
+				ref = from + sin(1.0 * now / duration * 3.14159265 / 2) * (to - from) ;
 				break;
 			}
 		}

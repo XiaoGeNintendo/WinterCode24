@@ -9,6 +9,7 @@
 #include "Sprite.h"
 #include "Action.h"
 #include "ActionManager.h"
+#include "Timer.h"
 using namespace std;
 
 AssetManager am;
@@ -109,12 +110,16 @@ void eventHandling() {
 
 int main(int argc, char* args[])
 {
+	Timer timer = Timer();
+
 	init();
 	loadGame();
 
 	//While application is running
 	while (!appCloseFlag)
 	{
+		timer.start();
+
 		eventHandling();
 
 		//Clear screen
@@ -126,9 +131,16 @@ int main(int argc, char* args[])
 		st.render(gRenderer);
 		actions.tick();
 
-		// 
 		//Update screen
 		SDL_RenderPresent(gRenderer);
+
+		//If frame finished early
+		int frameTicks = timer.getTicks();
+		if (frameTicks < MS_PER_FRAME)
+		{
+			//Wait remaining time
+			SDL_Delay(MS_PER_FRAME - frameTicks);
+		}
 	}
 		
 	//Free resources and close SDL

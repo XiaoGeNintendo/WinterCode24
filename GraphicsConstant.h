@@ -3,6 +3,8 @@
 
 extern const int SCREEN_WIDTH;
 extern const int SCREEN_HEIGHT;
+extern const int FRAMERATE;
+extern const int MS_PER_FRAME;
 
 //The window renderer
 extern SDL_Renderer* gRenderer;
