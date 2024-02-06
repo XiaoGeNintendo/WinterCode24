@@ -19,10 +19,25 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Actor.cpp" />
+    <ClCompile Include="GraphicsConstant.cpp" />
     <ClCompile Include="Test.cpp" />
+    <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="AssetManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Action.h" />
+    <ClInclude Include="ActionManager.h" />
+    <ClInclude Include="Actor.h" />
+    <ClInclude Include="AssetManager.h" />
+    <ClInclude Include="ErrorConstant.h" />
+    <ClInclude Include="GraphicsConstant.h" />
+    <ClInclude Include="Sprite.h" />
+    <ClInclude Include="Stage.h" />
     <ClInclude Include="Texture.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="img\son.png" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

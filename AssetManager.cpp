@@ -4,7 +4,7 @@
 #include <cassert>
 
 void AssetManager::load(string name, string path) {
-	Texture t;
+	Texture* t=new Texture();
 
 	//The final texture
 	SDL_Texture* newTexture = NULL;
@@ -19,7 +19,7 @@ void AssetManager::load(string name, string path) {
 	else
 	{
 		//Create texture from surface pixels
-		newTexture = SDL_CreateTextureFromSurface(globalRenderer, loadedSurface);
+		newTexture = SDL_CreateTextureFromSurface(gRenderer, loadedSurface);
 		if (newTexture == NULL)
 		{
 			printf("Fatal: Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
@@ -28,8 +28,8 @@ void AssetManager::load(string name, string path) {
 		else
 		{
 			//Get image dimensions
-			t.w = loadedSurface->w;
-			t.h = loadedSurface->h;
+			t->w = loadedSurface->w;
+			t->h = loadedSurface->h;
 		}
 
 		//Get rid of old loaded surface
@@ -37,18 +37,23 @@ void AssetManager::load(string name, string path) {
 	}
 
 	//Return success
-	t.texture = newTexture;
+	t->texture = newTexture;
 	assert(newTexture != NULL);
 
 	//Add to map
 	printf("SUCCESS: Loaded asset with name %s.\n", name.c_str());
-	loadedTexture[name] = &t;
+	loadedTexture[name] = t;
 }
 
 void AssetManager::close() {
 	for (auto x : loadedTexture) {
 		printf("Closing texture %s\n", x.first.c_str());
 		x.second->close();
+		delete x.second;
 	}
 	loadedTexture.clear();
+}
+
+Texture* AssetManager::operator[](string name) {
+	return loadedTexture[name];
 }

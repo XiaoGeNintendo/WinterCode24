@@ -1,4 +1,10 @@
 #pragma once
 
-const int ERR_LOAD_IMAGE = 1;
-const int ERR_PARSE_TEXTURE = 2;
+enum Error {
+	ERR_LOAD_IMAGE,
+	ERR_PARSE_TEXTURE,
+	ERR_SDL_INIT,
+	ERR_WINDOW_INIT,
+	ERR_RENDERER_INIT,
+	ERR_IMAGE_INIT,
+};

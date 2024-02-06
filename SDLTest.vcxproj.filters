@@ -18,10 +18,51 @@
     <ClCompile Include="Test.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="AssetManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsConstant.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Texture.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="AssetManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsConstant.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ErrorConstant.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Stage.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Sprite.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Action.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ActionManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="img\son.png">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
 </Project>

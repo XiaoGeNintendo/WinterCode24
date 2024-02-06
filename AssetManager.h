@@ -11,4 +11,5 @@ public:
 	void load(string name, string path);
 	void close();
 
+	Texture* operator[](string name);
 };
