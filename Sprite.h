@@ -9,10 +9,9 @@ public:
 	Texture* texture;
 
 	Sprite(Texture* texture) : texture(texture) {
-		w = texture->w;
-		h = texture->h;
-		rotateX = w / 2.0;
-		rotateY = h / 2.0;
+		size = texture->size();
+
+		rotationCenter = size / 2;
 	};
 
 	virtual	void render(SDL_Renderer* renderer) {
@@ -25,10 +24,10 @@ public:
 		}
 
 		if (abs(rotation) <= 1e-6 && !flipX && !flipY) {
-			texture->render(renderer, getGlobalX(), getGlobalY(), w, h);
+			texture->render(renderer, getGlobalPosition(), size);
 		}
 		else {
-			texture->render(renderer, getGlobalX(), getGlobalY(), w, h, rotation, rotateX, rotateY, flipX, flipY);
+			texture->render(renderer, getGlobalPosition(), size , rotation, rotationCenter, flipX, flipY);
 		}
 
 		if (!isEmptyColor(color)) {

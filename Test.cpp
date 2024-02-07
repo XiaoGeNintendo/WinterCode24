@@ -65,11 +65,10 @@ void loadGame() {
 	am.load("zyq", "img/son.png");
 	printf("%p",am["zyq"]);
 	Sprite* logo = new Sprite(am["zyq"]);
-	logo->x = 50;
-	logo->y = 50;
+	logo->position = VecI(50,50);
 	st.addChild(logo);
 
-	actions.add(new ActionRepeatForever(new ActionInterpolation<int>(logo->x, 60, 200)));
+	actions.add(new ActionRepeatForever(new ActionInterpolation<int>(logo->position.x, 60, 200)));
 	actions.add(new ActionRepeatForever(new ActionInterpolation<Uint8>(logo->color.a, 30, 0, SINE)));
 	actions.add(new ActionRepeatForever(new ActionInterpolation<double>(logo->rotation, 90, 360)));
 	printf("Game Loaded!\n");

@@ -21,24 +21,16 @@ void Actor::destroy() {
 	}
 }
 
-int Actor::getGlobalX() {
+VecI Actor::getGlobalPosition() {
 	if (parent == NULL) {
-		return x;
+		return position;
 	}
-	return parent->getGlobalX() + x;
-}
-
-int Actor::getGlobalY() {
-	if (parent == NULL) {
-		return y;
-	}
-	return parent->getGlobalY() + y;
+	return parent->getGlobalPosition() + position;
 }
 
 void Actor::addChild(Actor* son){
 
 	printf("Add child: %p to %p\n", son, this);
-	printf("Next: %p info= %d %d %d %d\n", son, son->x, son->y, son->w, son->h);
 	son->parent = this;
 	children.push_back(son);
 	sort(children.begin(), children.end(), compareChildren);
