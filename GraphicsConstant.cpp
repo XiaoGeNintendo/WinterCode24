@@ -7,6 +7,7 @@ const int MS_PER_FRAME = 1000 / FRAMERATE;
 
 SDL_Window* gWindow = NULL;
 SDL_Renderer* gRenderer = NULL;
+TTF_Font* gFont = NULL;
 
 bool appCloseFlag = false;
 

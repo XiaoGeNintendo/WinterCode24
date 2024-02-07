@@ -77,6 +77,11 @@ bool Actor::processMouse(VecI mouse) {
 	}
 }
 
+void Actor::centerAt(VecI center)
+{
+	position = center - size / 2;
+}
+
 void Actor::click() {
 	//do nothing
 }

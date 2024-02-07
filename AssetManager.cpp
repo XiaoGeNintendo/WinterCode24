@@ -3,6 +3,49 @@
 #include "ErrorConstant.h"
 #include <cassert>
 
+void AssetManager::preloadFont(string name, string path){
+	fontLookup[name] = path;
+	printf("Preloaded font:%s --> %s\n", name.c_str(), path.c_str());
+}
+
+Texture* AssetManager::generateString(string font, int size, string text, SDL_Color color)
+{
+	string textId = "f_" + font + "#" + to_string(size) + "@" + text;
+	if (loadedTexture.count(textId)) {
+		return loadedTexture[textId];
+	}
+
+	assert(fontLookup.count(font));
+
+	string fontName = font + to_string(size);
+	if (!loadedFont.count(fontName)) {
+		auto newFont = TTF_OpenFont(fontLookup[font].c_str(), size);
+		assert(newFont != NULL);
+		loadedFont[fontName] = newFont;
+	}
+
+	auto surface=TTF_RenderText_Blended(loadedFont[fontName], text.c_str(), color);
+	assert(surface != NULL);
+
+	//Create texture from surface pixels
+	auto mTexture = SDL_CreateTextureFromSurface(gRenderer, surface);
+	assert(mTexture != NULL);
+
+	//Create texture wrapper for saving
+	Texture* texture = new Texture();
+	texture->texture = mTexture;
+	texture->w = surface->w;
+	texture->h = surface->h;
+
+	//Get rid of old surface
+	SDL_FreeSurface(surface);
+	
+	printf("Loaded text texture: %s = %p\n", textId.c_str(), texture);
+	loadedTexture[textId] = texture;
+	return texture;
+}
+
+
 void AssetManager::load(string name, string path) {
 	Texture* t=new Texture();
 
@@ -45,6 +88,7 @@ void AssetManager::load(string name, string path) {
 	loadedTexture[name] = t;
 }
 
+
 void AssetManager::close() {
 	for (auto x : loadedTexture) {
 		printf("Closing texture %s\n", x.first.c_str());
@@ -52,6 +96,11 @@ void AssetManager::close() {
 		delete x.second;
 	}
 	loadedTexture.clear();
+	for (auto x : loadedFont) {
+		TTF_CloseFont(x.second);
+	}
+	loadedFont.clear();
+	fontLookup.clear();
 }
 
 Texture* AssetManager::operator[](string name) {

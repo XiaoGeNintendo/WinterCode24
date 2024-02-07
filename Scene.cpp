@@ -41,3 +41,9 @@ void SceneManager::back() {
 		}
 	));
 }
+
+void SceneManager::tick() {
+	if (!scenes.empty()) {
+		scenes.back()->tick();
+	}
+}

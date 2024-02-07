@@ -3,6 +3,7 @@
 #include <vector>
 #include <functional>
 #include "Actor.h"
+#include <string>
 using namespace std;
 
 class Action {
@@ -11,6 +12,9 @@ public:
 	virtual bool isFinished() = 0;
 	virtual void reset() = 0; 
 	virtual ~Action() = default;
+	virtual string describe() {
+		return "Unknown action";
+	}
 };
 
 //===========================================================================
@@ -43,6 +47,10 @@ public:
 	ActionInterpolation(T& ref, int duration, T from, T to, int method = LINAR) : ref(ref), now(0), duration(duration), from(from), to(to), method(method) {}
 	ActionInterpolation(T& ref, int duration, T to, int method = LINAR) : ref(ref), now(0), duration(duration), from(ref), to(to), method(method) {}
 
+	string describe() override {
+		return "Interpolation some property for " + to_string(duration) + "f " + to_string(from) + "-->" + to_string(to);
+	}
+
 	void tick() override {
 		if (now < duration) {
 			now++;
@@ -68,6 +76,10 @@ public:
 
 	~ActionRepeatForever() override {
 		delete action;
+	}
+
+	string describe() override {
+		return "Repeating forever for: " + action->describe();
 	}
 
 	void tick() override {
@@ -97,6 +109,10 @@ public:
 
 	ActionDelay(int duration) :total(duration) {}
 
+	string describe() override {
+		return "Delay for " + to_string(total);
+	}
+
 	void tick() override {
 		if (now < total) {
 			now++;
@@ -119,6 +135,16 @@ public:
 	int now = 0;
 
 	ActionSequence(vector<Action*> actions) :actions(actions) {}
+
+	string describe() override {
+		string s = "Sequence: ";
+		for (auto x : actions) {
+			s += x->describe();
+			s += "then ";
+		}
+		s += "finally finish";
+		return s;
+	}
 
 	~ActionSequence() override {
 		for (auto x : actions) {
@@ -164,6 +190,17 @@ public:
 			delete x;
 		}
 	}
+
+	string describe() override {
+		string s = "Doing: ";
+		for (auto x : actions) {
+			s += x->describe();
+			s += " ";
+		}
+		s += "together";
+		return s;
+	}
+
 	void tick() override {
 		for (auto x : actions) {
 			if (!x->isFinished()) {
@@ -198,6 +235,10 @@ public:
 
 	ActionRunnable(function<void()> func) : func(func) {}
 
+	string describe() override {
+		return "Run native code";
+	}
+
 	void tick() override{
 		func();
 		done = true;
@@ -219,3 +260,11 @@ public:
 ActionInterpolation<Uint8>* aalpha(Actor* actor, int duration, int from, int to);
 
 ActionInterpolation<Uint8>* aalpha(Actor* actor, int duration, int to);
+
+ActionParallel* amove(Actor* actor, int duration, VecI from, VecI to, bool acenter=false);
+
+ActionParallel* amove(Actor* actor, int duration, VecI to, bool acenter = false);
+
+ActionInterpolation<double>* arotate(Actor* actor, int duration, double from, double to);
+
+ActionInterpolation<double>* arotate(Actor* actor, int duration, double to);

@@ -48,4 +48,6 @@ public:
 		Return value is whether rejected
 	*/
 	bool processMouse(VecI mouse);
+
+	void centerAt(VecI center);
 };

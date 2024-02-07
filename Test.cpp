@@ -57,6 +57,11 @@ bool init() {
 		exit(ERR_IMAGE_INIT);
 	}
 	
+	if (TTF_Init() == -1) {
+		printf("Fatal: SDL_TTF could not initialize! Error:%s\n", TTF_GetError());
+		exit(ERR_TTF_INIT);
+	}
+
 	printf("Finished init!\n");
 	return true;
 }
@@ -65,6 +70,9 @@ void loadGame() {
 	//load assets
 	am.load("zyq", "img/son.png");
 	am.load("title", "img/title.png");
+
+	//load fonts
+	am.preloadFont("global", "font/font.ttf");
 
 	/* //test code here
 	Sprite* logo = new Sprite(am["zyq"]);
@@ -99,6 +107,7 @@ void close() {
 	//Quit SDL subsystems
 	IMG_Quit();
 	SDL_Quit();
+	TTF_Quit();
 
 	printf("Closed!\n");
 }
@@ -137,9 +146,10 @@ int main(int argc, char* args[])
 		SDL_RenderClear(gRenderer);
 
 		//am["zyq"]->render(gRenderer, 50, 50);
-		
-		st.render(gRenderer);
+
 		actions.tick();
+		scenes.tick();
+		st.render(gRenderer);
 
 		//Update screen
 		SDL_RenderPresent(gRenderer);

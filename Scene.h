@@ -27,6 +27,8 @@ public:
 	*/
 	virtual void forward() = 0;
 
+	virtual void tick() = 0;
+
 	/**
 		This event is fired when the scene is returned from a higher level scene
 	*/
@@ -56,4 +58,6 @@ struct SceneManager {
 	void add(Scene* scene);
 
 	void back();
+
+	void tick();
 };

@@ -86,9 +86,15 @@
     <ClInclude Include="TitleScene.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Label.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="img\son.png">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="img\title.png">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>

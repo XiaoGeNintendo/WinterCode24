@@ -4,6 +4,7 @@
 #include "ActionManager.h"
 #include "Scene.h"
 #include "AssetManager.h"
+#include <SDL_ttf.h>
 
 extern const int SCREEN_WIDTH;
 extern const int SCREEN_HEIGHT;
@@ -15,6 +16,8 @@ extern SDL_Renderer* gRenderer;
 
 //The window we'll be rendering to
 extern SDL_Window* gWindow;
+
+extern TTF_Font* gFont;
 
 //close flag
 extern bool appCloseFlag;
