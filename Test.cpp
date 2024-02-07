@@ -10,9 +10,10 @@
 #include "Action.h"
 #include "ActionManager.h"
 #include "Timer.h"
+
+#include "TitleScene.h"
 using namespace std;
 
-AssetManager am;
 Stage st;
 SDL_Event e;
 
@@ -63,7 +64,9 @@ bool init() {
 void loadGame() {
 	//load assets
 	am.load("zyq", "img/son.png");
-	printf("%p",am["zyq"]);
+	am.load("title", "img/title.png");
+
+	/* //test code here
 	Sprite* logo = new Sprite(am["zyq"]);
 	logo->position = VecI(50,50);
 	st.addChild(logo);
@@ -71,9 +74,12 @@ void loadGame() {
 	actions.add(new ActionRepeatForever(new ActionInterpolation<int>(logo->position.x, 60, 200)));
 	actions.add(new ActionRepeatForever(new ActionInterpolation<Uint8>(logo->color.a, 30, 0, SINE)));
 	actions.add(new ActionRepeatForever(new ActionInterpolation<double>(logo->rotation, 90, 360)));
+	*/
 
 	//load scenes
 	scenes = SceneManager(&st);
+
+	scenes.add(new TitleScene());
 
 	printf("Game Loaded!\n");
 }

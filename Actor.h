@@ -44,4 +44,8 @@ public:
 	*/
 	void removeFromParent();
 
+	/**
+		Return value is whether rejected
+	*/
+	bool processMouse(VecI mouse);
 };

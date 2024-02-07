@@ -10,9 +10,11 @@ struct SceneManager;
 */
 class Scene {
 public:
-	Actor* bgGroup;
-	Actor* fgGroup;
-	SceneManager* manager;
+	Actor* bgGroup = NULL;
+	Actor* fgGroup = NULL;
+	SceneManager* manager = NULL;
+
+	Scene() {}
 
 	/**
 		This event is fired when the scene is about to be displayed, especially creating the bgGroup and fgGroup

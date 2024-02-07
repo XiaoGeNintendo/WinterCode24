@@ -2,6 +2,7 @@
 #include <math.h>
 #include <vector>
 #include <functional>
+#include "Actor.h"
 using namespace std;
 
 class Action {
@@ -23,10 +24,10 @@ private:
 	void update() {
 		switch (method) {
 		case LINAR:
-			ref = from + (to - from) / duration * now;
+			ref = from * 1.0 + (to - from) * 1.0 / duration * now;
 			break;
 		case SINE:
-			ref = from + sin(1.0 * now / duration * 3.14159265 / 2) * (to - from);
+			ref = from * 1.0 + (to - from) * sin(1.0 * now / duration * 3.14159265 / 2);
 			break;
 		}
 	}
@@ -215,4 +216,6 @@ public:
 
 //Helpful functions
 
+ActionInterpolation<Uint8>* aalpha(Actor* actor, int duration, int from, int to);
 
+ActionInterpolation<Uint8>* aalpha(Actor* actor, int duration, int to);

@@ -25,6 +25,12 @@ template <typename T> struct Vector2D {
         return Vector2D(x / scalar, y / scalar);
     }
 
+    Vector2D& operator=(Vector2D another){
+        x = another.x;
+        y = another.y;
+        return *this;
+    }
+
     // Common functions
     T dot(const Vector2D& other) const {
         return x * other.x + y * other.y;
@@ -47,3 +53,4 @@ template <typename T> struct Vector2D {
 #define VecI Vector2D<int>
 #define VecF Vector2D<float>
 #define VecD Vector2D<double>
+

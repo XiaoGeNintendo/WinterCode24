@@ -1,6 +1,7 @@
 #include "Actor.h"
 #include <algorithm>
 #include <cassert>
+#include "Utility.h"
 void Actor::render(SDL_Renderer* renderer) {
 
 	for (auto child : children) {
@@ -54,6 +55,28 @@ void Actor::removeFromParent() {
 
 	assert(false);
 }
+
+bool Actor::processMouse(VecI mouse) {
+	if (mousePolicy & MOUSE_ACCEPT) {
+		if (inRect(getGlobalPosition(), size, mouse)) {
+			click();
+		}
+	}
+
+	if (mousePolicy & MOUSE_FALL_THROUGH) {
+		for (int i = children.size() - 1; i >= 0; i--) {
+			bool ans=children[i]->processMouse(mouse);
+			if (ans) {
+				return true;
+			}
+		}
+		return false;
+	}
+	else {
+		return true;
+	}
+}
+
 void Actor::click() {
 	//do nothing
 }

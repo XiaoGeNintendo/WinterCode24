@@ -12,3 +12,4 @@ bool appCloseFlag = false;
 
 ActionManager actions = ActionManager();
 SceneManager scenes = SceneManager(NULL);
+AssetManager am = AssetManager();

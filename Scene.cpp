@@ -10,7 +10,9 @@ void SceneManager::add(Scene* scene) {
 	scene->fgGroup->zIndex = 0;
 
 	//call out old scene
-	scenes.back()->forward();
+	if (!scenes.empty()) {
+		scenes.back()->forward();
+	}
 
 	//add child
 	stage->addChild(scene->bgGroup);
@@ -22,6 +24,9 @@ void SceneManager::add(Scene* scene) {
 
 void SceneManager::back() {
 	scenes.back()->back();
+	if (scenes.size() == 1) {
+		exit(0);
+	}
 	scenes[scenes.size() - 1]->returned();
 
 	//give you one sec
