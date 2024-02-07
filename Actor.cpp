@@ -1,5 +1,6 @@
 #include "Actor.h"
 #include <algorithm>
+#include <cassert>
 void Actor::render(SDL_Renderer* renderer) {
 
 	for (auto child : children) {
@@ -36,6 +37,23 @@ void Actor::addChild(Actor* son){
 	sort(children.begin(), children.end(), compareChildren);
 }
 
+void Actor::removeFromParent() {
+	if (this->parent == NULL) {
+		printf("Warning: Removing NULL parent %p", this);
+		return;
+	}
+
+	auto& x = this->parent->children;
+	for (int i = 0; i < x.size(); i++) {
+		if (x[i] == this) {
+			x.erase(x.begin() + i);
+			this->parent = NULL;
+			return;
+		}
+	}
+
+	assert(false);
+}
 void Actor::click() {
 	//do nothing
 }

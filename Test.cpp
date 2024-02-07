@@ -15,7 +15,6 @@ using namespace std;
 AssetManager am;
 Stage st;
 SDL_Event e;
-ActionManager actions;
 
 bool init() {
 	//Initialize SDL
@@ -62,6 +61,7 @@ bool init() {
 }
 
 void loadGame() {
+	//load assets
 	am.load("zyq", "img/son.png");
 	printf("%p",am["zyq"]);
 	Sprite* logo = new Sprite(am["zyq"]);
@@ -71,6 +71,10 @@ void loadGame() {
 	actions.add(new ActionRepeatForever(new ActionInterpolation<int>(logo->position.x, 60, 200)));
 	actions.add(new ActionRepeatForever(new ActionInterpolation<Uint8>(logo->color.a, 30, 0, SINE)));
 	actions.add(new ActionRepeatForever(new ActionInterpolation<double>(logo->rotation, 90, 360)));
+
+	//load scenes
+	scenes = SceneManager(&st);
+
 	printf("Game Loaded!\n");
 }
 

@@ -1,5 +1,8 @@
 #pragma once
 #include <SDL.h>
+#include "Action.h"
+#include "ActionManager.h"
+#include "Scene.h"
 
 extern const int SCREEN_WIDTH;
 extern const int SCREEN_HEIGHT;
@@ -14,3 +17,6 @@ extern SDL_Window* gWindow;
 
 //close flag
 extern bool appCloseFlag;
+
+extern ActionManager actions;
+extern SceneManager scenes;

@@ -1,13 +1,15 @@
 #pragma once
 #include <math.h>
 #include <vector>
+#include <functional>
 using namespace std;
 
 class Action {
 public:
 	virtual void tick() = 0;
 	virtual bool isFinished() = 0;
-	virtual void reset() = 0;
+	virtual void reset() = 0; 
+	virtual ~Action() = default;
 };
 
 //===========================================================================
@@ -40,7 +42,7 @@ public:
 	ActionInterpolation(T& ref, int duration, T from, T to, int method = LINAR) : ref(ref), now(0), duration(duration), from(from), to(to), method(method) {}
 	ActionInterpolation(T& ref, int duration, T to, int method = LINAR) : ref(ref), now(0), duration(duration), from(ref), to(to), method(method) {}
 
-	void tick() {
+	void tick() override {
 		if (now < duration) {
 			now++;
 
@@ -48,11 +50,11 @@ public:
 		}
 	}
 
-	bool isFinished() {
+	bool isFinished() override {
 		return now >= duration;
 	}
 
-	void reset() {
+	void reset() override {
 		now = 0;
 		ref = from;
 	}
@@ -63,7 +65,11 @@ public:
 	Action* action;
 	ActionRepeatForever(Action* action) : action(action) {}
 
-	void tick() {
+	~ActionRepeatForever() override {
+		delete action;
+	}
+
+	void tick() override {
 		if (action == NULL) {
 			return;
 		}
@@ -74,11 +80,139 @@ public:
 		}
 	}
 
-	bool isFinished() {
+	bool isFinished() override {
 		return false;
 	}
 
-	void reset() {
+	void reset() override {
 		action->reset();
 	}
 };
+//===========================================================================
+class ActionDelay : public Action {
+public:
+	int now = 0;
+	int total;
+
+	ActionDelay(int duration) :total(duration) {}
+
+	void tick() override {
+		if (now < total) {
+			now++;
+		}
+	}
+
+	bool isFinished() override {
+		return now >= total;
+	}
+
+	void reset() override {
+		now = 0;
+	}
+};
+
+//===========================================================================
+class ActionSequence : public Action {
+public:
+	vector<Action*> actions;
+	int now = 0;
+
+	ActionSequence(vector<Action*> actions) :actions(actions) {}
+
+	~ActionSequence() override {
+		for (auto x : actions) {
+			delete x;
+		}
+	}
+
+	void tick() override {
+		if (now == actions.size()) {
+			return;
+		}
+
+		if (actions[now]->isFinished()) {
+			now++;
+		}
+
+		if (now == actions.size()) {
+			return;
+		}
+
+		actions[now]->tick();
+	}
+
+	bool isFinished() override {
+		return now == actions.size();
+	}
+
+	void reset() override {
+		for (auto x : actions) {
+			x->reset();
+		}
+		now = 0;
+	}
+};
+//===========================================================================
+class ActionParallel : public Action {
+public:
+	vector<Action*> actions;
+	ActionParallel(vector<Action*> actions) : actions(actions) {}
+
+	~ActionParallel() override {
+		for (auto x : actions) {
+			delete x;
+		}
+	}
+	void tick() override {
+		for (auto x : actions) {
+			if (!x->isFinished()) {
+				x->tick();
+			}
+		}
+	}
+
+	void reset() override {
+		for (auto x : actions) {
+			x->reset();
+		}
+	}
+
+	bool isFinished() override{
+		for (auto x : actions) {
+			if (!x->isFinished()) {
+				return false;
+			}
+		}
+		return true;
+	}
+};
+
+
+//===========================================================================
+
+class ActionRunnable : public Action {
+public:
+	function<void()> func;
+	bool done = false;
+
+	ActionRunnable(function<void()> func) : func(func) {}
+
+	void tick() override{
+		func();
+		done = true;
+	}
+
+	bool isFinished() override{
+		return done;
+	}
+
+	void reset() {
+		done = false;
+	}
+};
+
+//===========================================================================
+
+//Helpful functions
+
+

@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="GraphicsConstant.cpp" />
+    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Test.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="AssetManager.cpp" />
@@ -34,6 +35,7 @@
     <ClInclude Include="AssetManager.h" />
     <ClInclude Include="ErrorConstant.h" />
     <ClInclude Include="GraphicsConstant.h" />
+    <ClInclude Include="Scene.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="Stage.h" />
     <ClInclude Include="Texture.h" />

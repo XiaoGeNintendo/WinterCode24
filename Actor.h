@@ -4,6 +4,9 @@
 #include "Vector2.h"
 using namespace std;
 
+const int MOUSE_FALL_THROUGH = 1;
+const int MOUSE_ACCEPT = 2;
+
 class Actor {
 public:
 
@@ -12,7 +15,11 @@ public:
 	int id = 0;
 	int zIndex = 0;
 	vector<Actor*> children;
-	bool receiveMouseEvent = false;
+
+	/**
+	Mask of MOUSE_FALL_THROUGH and MOUSE_ACCEPT
+	*/
+	int mousePolicy = MOUSE_FALL_THROUGH;
 	Actor* parent = NULL;
 	SDL_Color color = { 255,255,255,255 };
 	bool flipX = false, flipY = false;
@@ -28,6 +35,13 @@ public:
 
 	virtual void destroy();
 
+	virtual ~Actor() = default;
+
 	VecI getGlobalPosition();
+
+	/**
+	This does NOT delete this instance
+	*/
+	void removeFromParent();
 
 };

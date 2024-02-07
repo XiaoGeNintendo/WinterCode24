@@ -9,3 +9,6 @@ SDL_Window* gWindow = NULL;
 SDL_Renderer* gRenderer = NULL;
 
 bool appCloseFlag = false;
+
+ActionManager actions = ActionManager();
+SceneManager scenes = SceneManager(NULL);
