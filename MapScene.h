@@ -49,8 +49,10 @@ public:
 		fgGroup->addChild(backBtn);
 
 		//add level button
+		auto imgs = am.animation("flag",1,4);
+
 		for (int i = 0; i < LEVEL_COUNT; i++) {
-			auto x = new Sprite(am["flag"]);
+			auto x = new Sprite(imgs,20);
 			x->size = x->size * 4;
 			x->pivot = { 0.5,0.5 };
 			x->color.a = 0;

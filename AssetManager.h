@@ -3,7 +3,7 @@
 #include <map>
 #include <string>
 #include <SDL_ttf.h>
-
+#include <vector>
 using namespace std;
 
 class AssetManager {
@@ -17,6 +17,7 @@ public:
 
 	void load(string name, string path);
 	void close();
+	vector<Texture*> animation(string prefix, int start, int end);
 
 	Texture* operator[](string name);
 };

@@ -104,6 +104,18 @@ void AssetManager::close() {
 	fontLookup.clear();
 }
 
+vector<Texture*> AssetManager::animation(string prefix, int start, int end)
+{
+	vector<Texture*> v;
+	for (int i = start; i <= end; i++) {
+		string now = prefix + to_string(i);
+		assert(loadedTexture.count(now));
+		v.push_back(loadedTexture[now]);
+	}
+	return v;
+}
+
+
 Texture* AssetManager::operator[](string name) {
 	assert(loadedTexture.count(name));
 	return loadedTexture[name];
