@@ -70,6 +70,7 @@ void loadGame() {
 	//load assets
 	am.load("zyq", "img/son.png");
 	am.load("title", "img/title.png");
+	am.load("button", "img/button.png");
 
 	//load fonts
 	am.preloadFont("global", "font/font.ttf");
@@ -121,6 +122,9 @@ void eventHandling() {
 		if (e.type == SDL_QUIT)
 		{
 			appCloseFlag = true;
+		}
+		if (e.type == SDL_MOUSEBUTTONUP) {
+			st.processMouse(getMousePosition());
 		}
 	}
 

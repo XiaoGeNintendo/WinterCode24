@@ -24,10 +24,10 @@ public:
 		}
 
 		if (abs(rotation) <= 1e-6 && !flipX && !flipY) {
-			texture->render(renderer, getGlobalPosition(), size);
+			texture->render(renderer, getRenderPosition(), size);
 		}
 		else {
-			texture->render(renderer, getGlobalPosition(), size , rotation, rotationCenter, flipX, flipY);
+			texture->render(renderer, getRenderPosition(), size , rotation, rotationCenter, flipX, flipY);
 		}
 
 		if (!isEmptyColor(color)) {

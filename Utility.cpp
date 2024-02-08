@@ -7,3 +7,9 @@ bool isEmptyColor(SDL_Color a) {
 bool inRect(VecI xy, VecI wh, VecI test){
 	return test.x >= xy.x && test.x <= xy.x + wh.x && test.y >= xy.y && test.y <= xy.y + wh.y;
 }
+
+VecI getMousePosition() {
+	int x, y;
+	SDL_GetMouseState(&x, &y);
+	return { x,y };
+}

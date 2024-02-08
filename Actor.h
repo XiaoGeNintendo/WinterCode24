@@ -23,9 +23,10 @@ public:
 	Actor* parent = NULL;
 	SDL_Color color = { 255,255,255,255 };
 	bool flipX = false, flipY = false;
-	double rotation=0.0;
+	double rotation = 0.0;
 
 	VecI rotationCenter;
+	VecD pivot = { 0,0 };
 
 	virtual void render(SDL_Renderer* renderer);
 	
@@ -38,6 +39,7 @@ public:
 	virtual ~Actor() = default;
 
 	VecI getGlobalPosition();
+	VecI getRenderPosition();
 
 	/**
 	This does NOT delete this instance

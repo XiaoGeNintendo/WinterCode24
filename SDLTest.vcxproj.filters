@@ -89,6 +89,9 @@
     <ClInclude Include="Label.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="LabelButton.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="img\son.png">

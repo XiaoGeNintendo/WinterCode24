@@ -30,6 +30,11 @@ VecI Actor::getGlobalPosition() {
 	return parent->getGlobalPosition() + position;
 }
 
+VecI Actor::getRenderPosition()
+{
+	return getGlobalPosition() - VecI(pivot.x * size.x, pivot.y * size.y);
+}
+
 void Actor::addChild(Actor* son){
 
 	printf("Add child: %p to %p\n", son, this);
@@ -57,24 +62,23 @@ void Actor::removeFromParent() {
 }
 
 bool Actor::processMouse(VecI mouse) {
-	if (mousePolicy & MOUSE_ACCEPT) {
-		if (inRect(getGlobalPosition(), size, mouse)) {
-			click();
-		}
-	}
-
 	if (mousePolicy & MOUSE_FALL_THROUGH) {
-		for (int i = children.size() - 1; i >= 0; i--) {
-			bool ans=children[i]->processMouse(mouse);
-			if (ans) {
+		for (auto son : children) {
+			bool hit=son->processMouse(mouse);
+			if (hit) {
 				return true;
 			}
 		}
-		return false;
 	}
-	else {
-		return true;
+
+	if (mousePolicy & MOUSE_ACCEPT) {
+		if (inRect(getRenderPosition(), size, getMousePosition())) {
+			click();
+			return true;
+		}
 	}
+
+	return false;
 }
 
 void Actor::centerAt(VecI center)
