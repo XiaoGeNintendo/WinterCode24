@@ -5,6 +5,8 @@
 #include <math.h>
 
 class Sprite :public Actor {
+private:
+	function<void()> fClick;
 public:
 	Texture* texture;
 
@@ -14,11 +16,19 @@ public:
 		rotationCenter = size / 2;
 	};
 
+	void setClick(function<void()> fClick) {
+		this->fClick = fClick;
+		mousePolicy = MOUSE_ACCEPT;
+	}
+
+	void click() override {
+		fClick();
+	}
+
 	virtual	void render(SDL_Renderer* renderer) {
 		Actor::render(renderer);
 		
 		if (!isEmptyColor(color)) {
-			SDL_SetTextureBlendMode(texture->texture, SDL_BLENDMODE_BLEND);
 			SDL_SetTextureColorMod(texture->texture, color.r, color.g, color.b);
 			SDL_SetTextureAlphaMod(texture->texture, color.a);
 		}
@@ -31,7 +41,6 @@ public:
 		}
 
 		if (!isEmptyColor(color)) {
-			SDL_SetTextureBlendMode(texture->texture, SDL_BLENDMODE_NONE);
 			SDL_SetTextureColorMod(texture->texture, 255, 255, 255);
 			SDL_SetTextureAlphaMod(texture->texture, 255);
 		}

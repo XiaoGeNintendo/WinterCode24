@@ -101,6 +101,9 @@
     <ClInclude Include="MapScene.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="LevelInfo.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="img\son.png">

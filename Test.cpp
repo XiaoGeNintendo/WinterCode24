@@ -72,6 +72,7 @@ void loadGame() {
 	am.load("title", "img/title.png");
 	am.load("button", "img/button.png");
 	am.load("map", "img/map.png");
+	am.load("flag", "img/flag.png");
 
 	//load fonts
 	am.preloadFont("global", "font/font.ttf");

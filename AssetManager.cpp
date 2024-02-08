@@ -80,6 +80,7 @@ void AssetManager::load(string name, string path) {
 	}
 
 	//Return success
+	SDL_SetTextureBlendMode(newTexture, SDL_BLENDMODE_BLEND);
 	t->texture = newTexture;
 	assert(newTexture != NULL);
 

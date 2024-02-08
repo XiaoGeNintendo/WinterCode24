@@ -6,6 +6,7 @@
 #include "Label.h"
 #include "LabelButton.h"
 #include "GraphicsConstant.h"
+#include "LevelInfo.h"
 
 class MapScene : public Scene {
 private:
@@ -14,6 +15,10 @@ private:
 	Label* titleLabel;
 
 	LabelButton* backBtn;
+
+	Sprite* levelButton[LEVEL_COUNT];
+
+	VecI levelPos[LEVEL_COUNT] = { VecI(249,481),VecI(382,343),VecI(658,213) };
 
 public:
 	void init() override {
@@ -41,8 +46,25 @@ public:
 		backBtn->fClick = [&]() {
 			scenes.back();
 		};
-
 		fgGroup->addChild(backBtn);
+
+		//add level button
+		for (int i = 0; i < LEVEL_COUNT; i++) {
+			auto x = new Sprite(am["flag"]);
+			x->size = x->size * 4;
+			x->pivot = { 0.5,0.5 };
+			x->color.a = 0;
+			x->position = levelPos[i];
+			x->setClick([=]() {
+				//TODO level scene
+				});
+
+
+			levelButton[i] = x;
+			fgGroup->addChild(x);
+			actions.add(aalpha(x, 30, 255));
+		}
+
 
 		//animation
 		actions.add(apara(
@@ -70,6 +92,10 @@ public:
 			aalpha(titleLabel,30,0),
 			aalpha(backBtn,30,0)
 			}));
+
+		for (auto x : levelButton) {
+			actions.add(aalpha(x, 30, 0));
+		}
 	}
 
 	void forward() override {
