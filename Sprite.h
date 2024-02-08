@@ -39,7 +39,6 @@ public:
 	}
 
 	virtual	void render(SDL_Renderer* renderer) {
-		Actor::render(renderer);
 		
 		//animation
 		if (animationDelay > 0) {
@@ -72,5 +71,7 @@ public:
 			SDL_SetTextureColorMod(texture->texture, 255, 255, 255);
 			SDL_SetTextureAlphaMod(texture->texture, 255);
 		}
+
+		Actor::render(renderer);
 	}
 };

@@ -14,7 +14,6 @@ void Label::markDirty() {
 }
 
 void Label::render(SDL_Renderer* renderer) {
-	Actor::render(renderer);
 
 	if (fontSize != lastFontSize) {
 		markDirty();
@@ -35,4 +34,6 @@ void Label::render(SDL_Renderer* renderer) {
 	if (color.a != 255) {
 		SDL_SetTextureAlphaMod(texture->texture, 255);
 	}
+
+	Actor::render(renderer);
 }

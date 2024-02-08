@@ -24,6 +24,7 @@
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="GraphicsConstant.cpp" />
     <ClCompile Include="Label.cpp" />
+    <ClCompile Include="LevelInfo.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Test.cpp" />
     <ClCompile Include="Texture.cpp" />
@@ -36,6 +37,7 @@
     <ClInclude Include="ActionManager.h" />
     <ClInclude Include="Actor.h" />
     <ClInclude Include="AssetManager.h" />
+    <ClInclude Include="DifficultyScene.h" />
     <ClInclude Include="ErrorConstant.h" />
     <ClInclude Include="GraphicsConstant.h" />
     <ClInclude Include="Label.h" />

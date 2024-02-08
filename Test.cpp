@@ -72,6 +72,7 @@ void loadGame() {
 	am.load("title", "img/title.png");
 	am.load("button", "img/button.png");
 	am.load("map", "img/map.png");
+	am.load("dialog", "img/dialog.png");
 	for (int i = 1; i <= 4; i++) {
 		am.load("flag" + to_string(i), "img/flag" + to_string(i) + ".png");
 	}

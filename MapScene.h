@@ -7,6 +7,7 @@
 #include "LabelButton.h"
 #include "GraphicsConstant.h"
 #include "LevelInfo.h"
+#include "DifficultyScene.h"
 
 class MapScene : public Scene {
 private:
@@ -26,6 +27,7 @@ public:
 
 		//add background
 		bgImg = new Sprite(am["map"]);
+		bgImg->position = { -200,-200 };
 		bgImg->color.a = 0;
 		bgGroup->addChild(bgImg);
 
@@ -58,7 +60,8 @@ public:
 			x->color.a = 0;
 			x->position = levelPos[i];
 			x->setClick([=]() {
-				//TODO level scene
+				currentLevel = i;
+				scenes.add(new DifficultyScene());
 				});
 
 
@@ -85,7 +88,20 @@ public:
 
 	}
 
+	const VecI MAGIC = VecI(200, 300);
+
 	void returned() override {
+		actions.add(apara({
+			amove(titleLabel,30, VecI(SCREEN_WIDTH / 2,SCREEN_HEIGHT / 7)),
+			afont(titleLabel, 30, 48),
+			amove(bgGroup,30,{0,0}),
+			aalpha(backBtn,30,255)
+			}));
+
+		for(int i=0;i<LEVEL_COUNT;i++){
+			actions.add(amove(levelButton[i], 30, levelPos[i]));
+			actions.add(aalpha(levelButton[i], 30, 255));
+		}
 	}
 
 	void back() override {
@@ -101,5 +117,18 @@ public:
 	}
 
 	void forward() override {
+		actions.add(apara({
+			amove(titleLabel,30,VecI(400,25)),
+			afont(titleLabel, 30, 20),
+			amove(bgGroup,30,MAGIC-levelPos[currentLevel]),
+			aalpha(backBtn,30,0)
+			}));
+
+		for(int i=0;i<LEVEL_COUNT;i++){
+			actions.add(amove(levelButton[i], 30, MAGIC - levelPos[currentLevel] + levelButton[i]->position));
+			if (i != currentLevel) {
+				actions.add(aalpha(levelButton[i], 30, 0));
+			}
+		}
 	}
 };
