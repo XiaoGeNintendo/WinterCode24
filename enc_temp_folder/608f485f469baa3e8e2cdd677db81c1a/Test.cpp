@@ -125,8 +125,6 @@ void eventHandling() {
 			appCloseFlag = true;
 		}
 		if (e.type == SDL_MOUSEBUTTONUP) {
-			printf("Mouse click: %d %d\n", getMousePosition().x, getMousePosition().y);
-
 			st.processMouse(getMousePosition());
 		}
 	}

@@ -4,6 +4,7 @@
 #include "Action.h"
 #include "Label.h"
 #include "LabelButton.h"
+#include "MapScene.h"
 
 class TitleScene : public Scene {
 private:
@@ -38,7 +39,7 @@ public:
 		startBtn->color.a = 0;
 		startBtn->position = { SCREEN_WIDTH / 2,SCREEN_HEIGHT / 7 * 4 };
 		startBtn->fClick = [&]() {
-			printf("voo!\n");
+			scenes.add(new MapScene());
 		};
 		fgGroup->addChild(startBtn);
 
@@ -53,18 +54,18 @@ public:
 
 
 		//animation
-		actions.add(new ActionSequence(
+		actions.add(aseq(
 			{
 				aalpha(bgImg, 60, 0, 255),
-				new ActionParallel(
+				apara(
 					{
 						aalpha(titleLabel,60,0,255),
 						amove(titleLabel,60,{SCREEN_WIDTH / 2,SCREEN_HEIGHT / 4}),
 					}
 				),
-				new ActionParallel({
+				apara({
 					aalpha(startBtn,30,0,255),
-					new ActionSequence({new ActionDelay(15),aalpha(exitBtn,30,0,255)})
+					aseq({adelay(15),aalpha(exitBtn,30,0,255)})
 				})
 			}
 		));
@@ -73,8 +74,17 @@ public:
 	void tick() override {
 
 	}
-	void returned() override {
 
+	void returned() override {
+		actions.add(
+			apara({
+				amove(titleLabel,30,VecI(SCREEN_WIDTH/2,SCREEN_HEIGHT/4)),
+				afont(titleLabel,30,48),
+				aalpha(startBtn,30,255),
+				aalpha(exitBtn,30,255),
+				aalpha(bgImg,30,255)
+			})
+		);
 	}
 
 	void back() override {
@@ -82,6 +92,14 @@ public:
 	}
 
 	void forward() override{
-
+		actions.add(
+			apara({
+				amove(titleLabel,30,VecI(150,25)),
+				afont(titleLabel,30,16),
+				aalpha(startBtn,30,0),
+				aalpha(exitBtn,30,0),
+				aalpha(bgImg,30,0)
+				})
+		);
 	}
 };

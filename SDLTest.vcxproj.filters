@@ -42,6 +42,12 @@
     <ClCompile Include="Action.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Label.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ActionManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Texture.h">
@@ -90,6 +96,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="LabelButton.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MapScene.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

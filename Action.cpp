@@ -9,8 +9,33 @@ ActionInterpolation<Uint8>* aalpha(Actor* actor, int duration, int to) {
 	return new ActionInterpolation<Uint8>(actor->color.a, duration, to, LINAR);
 }
 
+ActionInterpolation<int>* afont(Label* actor, int duration, int to)
+{
+	return new ActionInterpolation<int>(actor->fontSize,duration,actor->fontSize,to,SINE);
+}
+
+ActionInterpolation<int>* afont(Label* actor, int duration, int from, int to)
+{
+	return new ActionInterpolation<int>(actor->fontSize, duration, actor->fontSize, to, SINE);
+}
+
 ActionInterpolation<double>* arotate(Actor* actor, int duration, double to) {
 	return new ActionInterpolation<double>(actor->rotation, duration, to, SINE);
+}
+
+ActionParallel* apara(vector<Action*> actions)
+{
+	return new ActionParallel(actions);
+}
+
+ActionSequence* aseq(vector<Action*> actions)
+{
+	return new ActionSequence(actions);
+}
+
+ActionDelay* adelay(int duration)
+{
+	return new ActionDelay(duration);
 }
 
 ActionInterpolation<double>* arotate(Actor* actor, int duration, double from, double to) {
@@ -31,4 +56,8 @@ ActionParallel* amove(Actor* actor, int duration, VecI from, VecI to, bool acent
 ActionParallel* amove(Actor* actor, int duration, VecI to, bool acenter)
 {
 	return amove(actor, duration, actor->position, to, acenter);
+}
+
+string Action::describe() {
+	return "Unknown action";
 }

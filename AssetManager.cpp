@@ -104,5 +104,6 @@ void AssetManager::close() {
 }
 
 Texture* AssetManager::operator[](string name) {
+	assert(loadedTexture.count(name));
 	return loadedTexture[name];
 }

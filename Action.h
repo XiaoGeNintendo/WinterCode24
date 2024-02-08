@@ -4,6 +4,7 @@
 #include <functional>
 #include "Actor.h"
 #include <string>
+#include "Label.h"
 using namespace std;
 
 class Action {
@@ -12,9 +13,7 @@ public:
 	virtual bool isFinished() = 0;
 	virtual void reset() = 0; 
 	virtual ~Action() = default;
-	virtual string describe() {
-		return "Unknown action";
-	}
+	virtual string describe();
 };
 
 //===========================================================================
@@ -22,6 +21,7 @@ enum InterpolationMethod {
 	LINAR,
 	SINE
 };
+
 template<typename T> class ActionInterpolation : public Action {
 private:
 
@@ -261,6 +261,12 @@ ActionInterpolation<Uint8>* aalpha(Actor* actor, int duration, int from, int to)
 
 ActionInterpolation<Uint8>* aalpha(Actor* actor, int duration, int to);
 
+
+ActionInterpolation<int>* afont(Label* actor, int duration, int to);
+
+ActionInterpolation<int>* afont(Label* actor, int duration, int from, int to);
+
+
 ActionParallel* amove(Actor* actor, int duration, VecI from, VecI to, bool acenter=false);
 
 ActionParallel* amove(Actor* actor, int duration, VecI to, bool acenter = false);
@@ -268,3 +274,9 @@ ActionParallel* amove(Actor* actor, int duration, VecI to, bool acenter = false)
 ActionInterpolation<double>* arotate(Actor* actor, int duration, double from, double to);
 
 ActionInterpolation<double>* arotate(Actor* actor, int duration, double to);
+
+ActionParallel* apara(vector<Action*> actions);
+
+ActionSequence* aseq(vector<Action*> actions);
+
+ActionDelay* adelay(int duration);

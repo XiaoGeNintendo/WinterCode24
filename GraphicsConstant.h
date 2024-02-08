@@ -6,6 +6,8 @@
 #include "AssetManager.h"
 #include <SDL_ttf.h>
 
+#define PI 3.141592653589
+
 extern const int SCREEN_WIDTH;
 extern const int SCREEN_HEIGHT;
 extern const int FRAMERATE;

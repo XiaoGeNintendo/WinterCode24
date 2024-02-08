@@ -31,6 +31,10 @@ public:
 
 	void render(SDL_Renderer* renderer) override {
 
+		if (color.a == 0) {
+			return;
+		}
+
 		if (lastSize != fontSize) {
 			markDirty(); //regenerate string
 			lastSize = fontSize;
