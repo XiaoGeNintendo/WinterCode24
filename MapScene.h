@@ -40,8 +40,11 @@ public:
 		titleLabel->color.a = 0;
 		fgGroup->addChild(titleLabel);
 
-		//back button
+		//back button does not work anymore
+
+		
 		backBtn = new LabelButton("global", 20, "Back", { 111,111,111,255 });
+		backBtn->visible = false;
 		backBtn->pivot = { 0.5,0.5 };
 		backBtn->position = { 50,SCREEN_HEIGHT / 7 * 6 };
 		backBtn->color.a = 0;
@@ -49,6 +52,7 @@ public:
 			scenes.back();
 		};
 		fgGroup->addChild(backBtn);
+		
 
 		//add level button
 		auto imgs = am.animation("flag",1,4);

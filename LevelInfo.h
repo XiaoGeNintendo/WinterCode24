@@ -19,12 +19,15 @@ struct EnemyData {
 	int pathId;
 };
 struct LevelInfo {
-	string desc;
+	vector<string> desc;
 	string background;
-	string preview;
 
 	vector<VecI> deployPosition;
 	vector<int> path[16];
 	map<string, EnemyData> enemies;
 	vector<vector<string>> waves;
 };
+
+extern LevelInfo levels[LEVEL_COUNT];
+
+void loadLevelInfos();

@@ -73,6 +73,14 @@ void loadGame() {
 	am.load("button", "img/button.png");
 	am.load("map", "img/map.png");
 	am.load("dialog", "img/dialog.png");
+	am.load("fightBtn", "img/fightBtn.png");
+	am.load("level0", "img/level0.png");
+	am.load("difficultyMarker", "img/difficultyMarker.png");
+	am.load("signpost", "img/signpost.png");
+	am.load("heartBar", "img/heartbar.png");
+	am.load("goldBar", "img/goldbar.png");
+	am.load("transition", "img/transition.png");
+
 	for (int i = 1; i <= 4; i++) {
 		am.load("flag" + to_string(i), "img/flag" + to_string(i) + ".png");
 	}
@@ -93,7 +101,12 @@ void loadGame() {
 	//load scenes
 	scenes = SceneManager(&st);
 
-	scenes.add(new TitleScene());
+	//load game content
+	loadLevelInfos();
+
+	//scenes.add(new TitleScene());
+	scenes.add(new GameScene()); //test only
+
 
 	printf("Game Loaded!\n");
 }

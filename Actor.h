@@ -16,6 +16,8 @@ public:
 	int zIndex = 0;
 	vector<Actor*> children;
 
+	bool visible = true;
+
 	/**
 	Mask of MOUSE_FALL_THROUGH and MOUSE_ACCEPT
 	*/

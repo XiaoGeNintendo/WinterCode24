@@ -18,6 +18,8 @@ private:
 
 public:
 
+	bool showBg = true;
+
 	LabelButton(string font, int fontSize, string text, SDL_Color color) :Label(font, fontSize, text, color) {
 		mousePolicy = MOUSE_ACCEPT;
 		largeSize = fontSize + 3;
@@ -52,21 +54,23 @@ public:
 		}
 		hit = newhit;
 
-		//render background
-		if (color.a!=255) {
-			SDL_SetTextureBlendMode(am["button"]->texture, SDL_BLENDMODE_BLEND);
-			SDL_SetTextureAlphaMod(am["button"]->texture, color.a);
-		}
+		if (showBg) {
+			//render background
+			if (color.a != 255) {
+				SDL_SetTextureBlendMode(am["button"]->texture, SDL_BLENDMODE_BLEND);
+				SDL_SetTextureAlphaMod(am["button"]->texture, color.a);
+			}
 
-		if (abs(rotation) <= 1e-6 && !flipX && !flipY) {
-			am["button"]->render(renderer, getRenderPosition() - MAGIC, size + MAGIC * 2);
-		}
-		else {
-			am["button"]->render(renderer, getRenderPosition() - MAGIC, size + MAGIC * 2, rotation, rotationCenter, flipX, flipY);
-		}
+			if (abs(rotation) <= 1e-6 && !flipX && !flipY) {
+				am["button"]->render(renderer, getRenderPosition() - MAGIC, size + MAGIC * 2);
+			}
+			else {
+				am["button"]->render(renderer, getRenderPosition() - MAGIC, size + MAGIC * 2, rotation, rotationCenter, flipX, flipY);
+			}
 
-		if (color.a!=255) {
-			SDL_SetTextureAlphaMod(am["button"]->texture, 255);
+			if (color.a != 255) {
+				SDL_SetTextureAlphaMod(am["button"]->texture, 255);
+			}
 		}
 
 		//render label

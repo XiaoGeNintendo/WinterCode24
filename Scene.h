@@ -60,4 +60,6 @@ struct SceneManager {
 	void back();
 
 	void tick();
+
+	void set(Scene* scene);
 };

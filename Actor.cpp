@@ -5,7 +5,9 @@
 void Actor::render(SDL_Renderer* renderer) {
 
 	for (auto child : children) {
-		child->render(renderer);
+		if (child->visible) {
+			child->render(renderer);
+		}
 	}
 }
 
@@ -62,6 +64,10 @@ void Actor::removeFromParent() {
 }
 
 bool Actor::processMouse(VecI mouse) {
+	if (!visible) {
+		return false;
+	}
+
 	if (mousePolicy & MOUSE_FALL_THROUGH) {
 		for (auto son : children) {
 			bool hit=son->processMouse(mouse);

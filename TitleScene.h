@@ -39,7 +39,7 @@ public:
 		startBtn->color.a = 0;
 		startBtn->position = { SCREEN_WIDTH / 2,SCREEN_HEIGHT / 7 * 4 };
 		startBtn->fClick = [&]() {
-			scenes.add(new MapScene());
+			scenes.set(new MapScene());
 		};
 		fgGroup->addChild(startBtn);
 

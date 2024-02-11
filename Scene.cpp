@@ -1,5 +1,7 @@
 #include "Scene.h"
 #include "GraphicsConstant.h"
+#include "Sprite.h"
+
 SceneManager::SceneManager(Stage* stage) :stage(stage) {}
 
 void SceneManager::add(Scene* scene) {
@@ -57,4 +59,48 @@ void SceneManager::tick() {
 	if (!scenes.empty()) {
 		scenes.back()->tick();
 	}
+}
+
+void SceneManager::set(Scene* scene)
+{
+	//unbind mouse
+	scenes.back()->bgGroup->mousePolicy = 0;
+	scenes.back()->fgGroup->mousePolicy = 0;
+	
+	Sprite* left = new Sprite(am["transition"]);
+	Sprite* right = new Sprite(am["transition"]);
+	left->position = { -400,0 };
+	right->position = { 800,0 };
+	left->zIndex = right->zIndex = 1000;
+	
+	stage->addChild(left);
+	stage->addChild(right);
+
+	actions.add(aseq({
+		apara({
+			amove(left,30,{0,0}),
+			amove(right,30,{400,0})
+		}),
+		new ActionRunnable([=]() {
+			while (!scenes.empty()) {
+				scenes.back()->bgGroup->removeFromParent();
+				scenes.back()->fgGroup->removeFromParent();
+				delete scenes.back();
+				scenes.pop_back();
+			}
+
+			add(scene);
+		}),
+		adelay(60),
+		apara({
+			amove(left,30,{0,0}, {-400,0}), //NOTE: BUG in action lazy to fix though
+			amove(right,30,{400,0}, {800,0})
+		}),
+		new ActionRunnable([=]() {
+			left->removeFromParent();
+			right->removeFromParent();
+			delete left;
+			delete right;
+		})
+	}));
 }

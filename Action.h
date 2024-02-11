@@ -165,6 +165,8 @@ public:
 			return;
 		}
 
+		// printf("Ticking: %d %s\n", now, actions[now]->describe().c_str());
+
 		actions[now]->tick();
 	}
 

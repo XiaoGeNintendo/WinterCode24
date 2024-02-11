@@ -25,7 +25,10 @@ Texture* AssetManager::generateString(string font, int size, string text, SDL_Co
 	}
 
 	auto surface=TTF_RenderText_Blended(loadedFont[fontName], text.c_str(), color);
-	assert(surface != NULL);
+	if (surface == NULL) {
+		printf("Fatal: Cannot load text due to %s.", TTF_GetError());
+		assert(false);
+	}
 
 	//Create texture from surface pixels
 	auto mTexture = SDL_CreateTextureFromSurface(gRenderer, surface);
