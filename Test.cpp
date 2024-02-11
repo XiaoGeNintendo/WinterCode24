@@ -80,6 +80,10 @@ void loadGame() {
 	am.load("heartBar", "img/heartbar.png");
 	am.load("goldBar", "img/goldbar.png");
 	am.load("transition", "img/transition.png");
+	am.load("bomber", "img/bomber.png");
+	am.load("archer", "img/archer.png");
+	am.load("soldier", "img/soldier.png");
+	am.load("mage", "img/mage.png");
 
 	for (int i = 1; i <= 4; i++) {
 		am.load("flag" + to_string(i), "img/flag" + to_string(i) + ".png");
@@ -112,6 +116,12 @@ void loadGame() {
 }
 
 void close() {
+
+	//Destroy towers
+	for (int i = 0; i < TOWER_COUNT; i++) {
+		delete towers[i];
+	}
+
 	//Destroy AM & stage
 	st.destroy();
 	am.close();
@@ -142,7 +152,7 @@ void eventHandling() {
 			appCloseFlag = true;
 		}
 		if (e.type == SDL_MOUSEBUTTONUP) {
-			printf("Mouse click: %d %d\n", getMousePosition().x, getMousePosition().y);
+			//printf("Mouse click: %d %d\n", getMousePosition().x, getMousePosition().y);
 
 			st.processMouse(getMousePosition());
 		}

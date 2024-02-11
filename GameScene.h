@@ -6,6 +6,8 @@
 #include "Label.h"
 #include "LabelButton.h"
 #include "MapScene.h"
+#include "TowerInstance.h"
+using namespace std;
 
 class GameScene : public Scene {
 private:
@@ -19,17 +21,26 @@ private:
 
 	Sprite* goldBar;
 	Label* goldDisplay;
+
+	int openingUi;
+
+	Sprite* buildIcons[TOWER_COUNT];
+	Actor* buildUi;
+
+	vector<TowerInstance*> towerInstances;
+
 public:
 	void init() override {
 		bgGroup = new Actor();
 		fgGroup = new Actor();
-
 		lvl = levels[currentLevel];
+		towerInstances.resize(lvl.deployPosition.size());
 
+		//bg img
 		bgImg = new Sprite(am[lvl.background]);
 		bgGroup->addChild(bgImg);
 		bgImg->setClick([=]() {
-			printf("{%d,%d},", getMousePosition().x - bgImg->position.x, getMousePosition().y - bgImg->position.y);
+			printf("{%d,%d},", getMousePosition().x - bgImg->getGlobalPosition().x, getMousePosition().y - bgImg->getGlobalPosition().y);
 			});
 
 		//deploy position
@@ -38,6 +49,11 @@ public:
 			deployer[i] = new Sprite(am["signpost"]);
 			deployer[i]->pivot = { 0.5,1 };
 			deployer[i]->position = lvl.deployPosition[i];
+			deployer[i]->setClick([=]() {
+				openingUi = i;
+				buildUi->position = lvl.deployPosition[i];
+				buildUi->visible = true;
+				});
 			bgGroup->addChild(deployer[i]);
 		}
 
@@ -58,6 +74,21 @@ public:
 		goldDisplay = new Label("global", 20, "0", { 255,255,255,255 });
 		goldDisplay->position = { 60,5 };
 		goldBar->addChild(goldDisplay);
+
+		//building menu
+		buildUi = new Actor();
+		for (int i = 0; i < TOWER_COUNT; i++) {
+			Tower* t = towers[i];
+			double angle = 2 * PI / TOWER_COUNT * i;
+			double radius = 100;
+
+			buildIcons[i] = new Sprite(am[t->id]);
+			buildIcons[i]->position = VecI(cos(angle) * radius, sin(angle) * radius);
+			buildIcons[i]->pivot = { 0.5,0.5 };
+			buildUi->addChild(buildIcons[i]);
+		}
+		buildUi->visible = false;
+		bgGroup->addChild(buildUi);
 
 	}
 
