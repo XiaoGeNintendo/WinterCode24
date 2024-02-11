@@ -64,7 +64,7 @@ void Actor::removeFromParent() {
 }
 
 bool Actor::processMouse(VecI mouse) {
-	//printf("Processing mouse %p", this);
+	//printf("Processing mouse %p\n", this);
 	if (!visible) {
 		return false;
 	}

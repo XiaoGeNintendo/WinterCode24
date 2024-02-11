@@ -10,7 +10,13 @@ using namespace std;
 class Sprite :public Actor {
 private:
 	function<void()> fClick;
+	function<void()> fMouseEnter;
+	function<void()> fMouseExit;
+
+	bool doHover = false;
 	int frameCounter = 0;
+	bool lastIn = false;
+
 public:
 	Texture* texture;
 
@@ -34,12 +40,31 @@ public:
 		mousePolicy = MOUSE_ACCEPT;
 	}
 
+	void setHover(function<void()> fMouseEnter,function<void()> fMouseExit) {
+		this->fMouseEnter = fMouseEnter;
+		this->fMouseExit = fMouseExit;
+		doHover = true;
+	}
+
 	void click() override {
 		fClick();
 	}
 
 	virtual	void render(SDL_Renderer* renderer) {
 		
+		if (doHover) {
+			auto m = getMousePosition();
+			auto r = getRenderPosition();
+			bool thisIn = (m.x >= r.x && m.x <= r.x + size.x && m.y >= r.y && m.y <= r.y + size.y);
+			if (!lastIn && thisIn) {
+				fMouseEnter();
+			}
+			if (lastIn && !thisIn) {
+				fMouseExit();
+			}
+			lastIn = thisIn;
+		}
+
 		//animation
 		if (animationDelay > 0) {
 			//is animation
