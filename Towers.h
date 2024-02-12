@@ -11,9 +11,7 @@ public:
 		upgradeCost = { 110,140,170 };
 	}
 
-	void tick() {
-	//TODO
-	}
+	void tick(void* instance, void* scene);
 };
 
 class MageTower : public Tower {
@@ -26,9 +24,7 @@ public:
 		upgradeCost = { 200,230,260 };
 	}
 
-	void tick() {
-		//TODO
-	}
+	void tick(void* instance, void* scene);
 };
 
 class BomberTower : public Tower {
@@ -41,9 +37,7 @@ public:
 		upgradeCost = { 160,200,240 };
 	}
 
-	void tick() {
-		//TODO
-	}
+	void tick(void* instance, void* scene);
 };
 
 
@@ -57,7 +51,5 @@ public:
 		upgradeCost = { 110,130,150 };
 	}
 
-	void tick() {
-		//TODO
-	}
+	void tick(void* instance, void* scene);
 };

@@ -1,5 +1,4 @@
 #pragma once
-#pragma once
 #include "Scene.h"
 #include "Sprite.h"
 #include "Action.h"
@@ -12,7 +11,7 @@
 using namespace std;
 
 class GameScene : public Scene {
-private:
+public:
 	Sprite* bgImg;
 	LevelInfo lvl;
 
@@ -37,6 +36,7 @@ private:
 
 	Actor* towerSpriteGroup;
 	Actor* enemySpriteGroup;
+	Actor* projectileSpriteGroup;
 
 	Sprite* tooltipWindow;
 	Label* tooltipText;
@@ -49,7 +49,6 @@ private:
 	int nextEnemyCountdown,nextWaveCountdown;
 	int globalEnemyId = 0;
 
-public:
 	void init() override {
 		bgGroup = new Actor();
 		fgGroup = new Actor();
@@ -199,6 +198,9 @@ public:
 
 		enemySpriteGroup = new Actor();
 		bgGroup->addChild(enemySpriteGroup);
+
+		projectileSpriteGroup = new Actor();
+		bgGroup->addChild(projectileSpriteGroup);
 
 		//build tooltip
 		tooltipWindow = new Sprite(am["tooltip"]);

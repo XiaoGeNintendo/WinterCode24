@@ -11,5 +11,5 @@ public:
 	int price;
 	vector<int> upgradeCost;
 
-	virtual void tick() = 0;
+	virtual void tick(void* instance, void* scene) = 0;
 };

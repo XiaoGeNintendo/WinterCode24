@@ -10,8 +10,8 @@
 #include "Action.h"
 #include "ActionManager.h"
 #include "Timer.h"
-
 #include "TitleScene.h"
+#include "GameScene.h"
 using namespace std;
 
 Stage st;

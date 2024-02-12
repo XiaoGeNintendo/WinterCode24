@@ -22,6 +22,7 @@
     <ClCompile Include="Action.cpp" />
     <ClCompile Include="ActionManager.cpp" />
     <ClCompile Include="Actor.cpp" />
+    <ClCompile Include="DifficultyScene.cpp" />
     <ClCompile Include="GraphicsConstant.cpp" />
     <ClCompile Include="Label.cpp" />
     <ClCompile Include="LevelInfo.cpp" />
@@ -30,6 +31,7 @@
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="Towers.cpp" />
     <ClCompile Include="Utility.cpp" />
     <ClCompile Include="Vector2.cpp" />
   </ItemGroup>

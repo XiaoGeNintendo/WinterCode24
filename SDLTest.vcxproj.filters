@@ -54,6 +54,12 @@
     <ClCompile Include="Vector2.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Towers.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DifficultyScene.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Texture.h">

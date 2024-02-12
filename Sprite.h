@@ -5,6 +5,7 @@
 #include <math.h>
 #include <vector>
 #include <string>
+#include <functional>
 using namespace std;
 
 class Sprite :public Actor {
