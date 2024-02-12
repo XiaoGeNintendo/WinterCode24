@@ -7,6 +7,7 @@
 #include "LabelButton.h"
 #include "MapScene.h"
 #include "TowerInstance.h"
+#include "EnemyInstance.h"
 #include <cassert>
 using namespace std;
 
@@ -28,16 +29,25 @@ private:
 	Sprite* buildIcons[TOWER_COUNT];
 	Actor* buildUi;
 
-	vector<TowerInstance*> towerInstances;
+	vector<TowerInstance> towerInstances;
+	vector<EnemyInstance> enemyInstances;
+	map<int, Sprite*> enemySprites;
+
 	vector<Sprite*> towerSprites;
 
 	Actor* towerSpriteGroup;
+	Actor* enemySpriteGroup;
 
 	Sprite* tooltipWindow;
 	Label* tooltipText;
 
 	int playerHp = 20;
 	int playerGold = 0;
+
+	int currentWave;
+	int nextEnemy;
+	int nextEnemyCountdown,nextWaveCountdown;
+	int globalEnemyId = 0;
 
 public:
 	void init() override {
@@ -64,7 +74,10 @@ public:
 			playerHp = 1;
 			playerGold = 300;
 		}
-		
+		nextWaveCountdown = lvl.waves[0].length;
+		nextEnemyCountdown = 1e9;
+		currentWave = -1;
+
 		//bg img
 		bgImg = new Sprite(am[lvl.background]);
 		bgGroup->addChild(bgImg);
@@ -137,7 +150,7 @@ public:
 
 			buildIcons[i]->setClick([=]() {
 				assert(openingUi != -1);
-				assert(towerInstances[openingUi] == NULL);
+				assert(towerInstances[openingUi].level == 0);
 
 				if (playerGold < towers[i]->price) {
 					auto now = standbyPos;
@@ -155,9 +168,9 @@ public:
 
 				playerGold -= towers[i]->price;
 
-				towerInstances[openingUi] = new TowerInstance();
-				towerInstances[openingUi]->level = 1;
-				towerInstances[openingUi]->tower = towers[i];
+				towerInstances[openingUi] = TowerInstance();
+				towerInstances[openingUi].level = 1;
+				towerInstances[openingUi].tower = towers[i];
 				towerSprites[openingUi] = new Sprite(am[towers[i]->id + "_b"]);
 				towerSprites[openingUi]->position = lvl.deployPosition[openingUi] - VecI(0,50);
 				towerSprites[openingUi]->pivot = { 0.5,0.9 };
@@ -180,9 +193,12 @@ public:
 		buildUi->zIndex = 10;
 		bgGroup->addChild(buildUi);
 
-		//add tower sprite group
+		//add sprite group
 		towerSpriteGroup = new Actor();
 		bgGroup->addChild(towerSpriteGroup);
+
+		enemySpriteGroup = new Actor();
+		bgGroup->addChild(enemySpriteGroup);
 
 		//build tooltip
 		tooltipWindow = new Sprite(am["tooltip"]);
@@ -197,6 +213,84 @@ public:
 	}
 
 	void tick() override {
+		//wave counting
+		nextWaveCountdown--;
+		if (nextWaveCountdown == 0) {
+			currentWave++;
+			printf("Started wave %d\n", currentWave);
+			nextEnemy = 0;
+			nextWaveCountdown = currentWave==lvl.waves.size() ? 1e9 : lvl.waves[currentWave + 1].length;
+			nextEnemyCountdown = lvl.waves[currentWave].delay;
+		}
+		nextEnemyCountdown--;
+		if (nextEnemyCountdown == 0) {
+			if (currentWave != lvl.waves.size() && nextEnemy != lvl.waves[currentWave].enemies.size()) {
+				printf("Generating %s\n", lvl.waves[currentWave].enemies[nextEnemy].c_str());
+				//generate enemy
+				auto instance = EnemyInstance();
+				instance.data = &lvl.enemies[lvl.waves[currentWave].enemies[nextEnemy]];
+				instance.hp = instance.data->maxhp;
+				instance.path = lvl.path[instance.data->randomPath ? instance.data->pathId + rand() % 3 : instance.data->pathId];
+				instance.position = i2d(instance.path[0]);
+				instance.nextPoint = 1;
+				instance.state = WALKING;
+				instance.id = globalEnemyId;
+				globalEnemyId++;
+				enemyInstances.push_back(instance);
+
+				//generate sprite
+				auto enemySprite = new Sprite(am.animation(instance.data->id + "_w", 1, instance.data->wac), 20);
+				enemySprites[instance.id] = enemySprite;
+				enemySpriteGroup->addChild(enemySprite);
+
+				nextEnemy++;
+				nextEnemyCountdown = lvl.waves[currentWave].delay;
+			}
+		}
+
+		//ticking objects
+		for(int i=0;i<enemyInstances.size();i++){
+			EnemyInstance& enemy = enemyInstances[i];
+			//calculate speed
+			enemy.speed = i2d(enemy.path[enemy.nextPoint] - enemy.path[enemy.nextPoint - 1]).normalize() * enemy.data->speed;
+			enemy.position = enemy.position + enemy.speed;
+
+			//check if in bound
+			auto a = enemy.path[enemy.nextPoint];
+			auto b = enemy.path[enemy.nextPoint - 1];
+			VecI mn = { min(a.x,b.x),min(a.y,b.y) };
+			VecI mx = { max(a.x,b.x),max(a.y,b.y) };
+			if (!inRect(mn, mx - mn, enemy.position)) {
+				enemy.position = i2d(a);
+				enemy.nextPoint++;
+				if (enemy.nextPoint == enemy.path.size()) {
+					playerHp--;
+					enemySprites[enemy.id]->removeFromParent();
+					delete enemySprites[enemy.id];
+					enemySprites[enemy.id] = NULL;
+
+					enemyInstances.erase(enemyInstances.begin() + i);
+					i--;
+					continue;
+					//TODO player hp 0
+				}
+			}
+
+			//linking sprites
+			auto sp = enemySprites[enemy.id];
+			sp->position = d2i(enemy.position);
+			sp->flipX = (enemy.speed.x > 0);
+			if (enemy.state == WALKING) {
+				sp->setAnimation(am.animation(enemy.data->id + "_w", 1, enemy.data->wac),20);
+			}
+			else if (enemy.state == PAUSING) {
+				sp->setAnimation(am.animation(enemy.data->id + "_w", 1, enemy.data->wac), 1e9);
+			}
+			else if (enemy.state == FIGHTING) {
+				sp->setAnimation(am.animation(enemy.data->id + "_a", 1, enemy.data->wac), 20);
+			}
+		}
+
 		//setup health
 		heartDisplay->text = to_string(playerHp);
 		goldDisplay->text = to_string(playerGold);

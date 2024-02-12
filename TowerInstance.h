@@ -1,9 +1,7 @@
 #pragma once
 #include "Tower.h"
 
-class TowerInstance {
-public:
+struct TowerInstance {
 	Tower* tower;
 	int level;
-
 };

@@ -91,6 +91,8 @@ void loadGame() {
 		am.load("flag" + to_string(i), "img/flag" + to_string(i) + ".png");
 	}
 
+	am.loadEnemy("goblin", 2, 3);
+
 	//load fonts
 	am.preloadFont("global", "font/font.ttf");
 

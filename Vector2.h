@@ -54,3 +54,5 @@ template <typename T> struct Vector2D {
 #define VecF Vector2D<float>
 #define VecD Vector2D<double>
 
+VecD i2d(VecI x);
+VecI d2i(VecD x);

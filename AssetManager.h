@@ -16,6 +16,7 @@ public:
 	Texture* generateString(string font, int size, string text, SDL_Color color);
 
 	void load(string name, string path);
+	void loadEnemy(string prefix, int wac, int aac);
 	void close();
 	vector<Texture*> animation(string prefix, int start, int end);
 

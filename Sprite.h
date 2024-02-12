@@ -49,6 +49,19 @@ public:
 	void click() override {
 		fClick();
 	}
+	
+
+	void setAnimation(vector<Texture*> animation, int animationDelay) {
+		if (animation == this->animation) {
+			this->animationDelay = animationDelay;
+			return;
+		}
+		this->animation = animation;
+		this->texture = this->animation[0];
+		this->animationDelay = animationDelay;
+		size = texture->size();
+		rotationCenter = size / 2;
+	}
 
 	virtual	void render(SDL_Renderer* renderer) {
 		

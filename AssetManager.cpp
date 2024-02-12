@@ -92,6 +92,18 @@ void AssetManager::load(string name, string path) {
 	loadedTexture[name] = t;
 }
 
+void AssetManager::loadEnemy(string prefix, int wac, int aac)
+{
+	for (int i = 1; i <= wac; i++) {
+		string n = prefix + "_w" + to_string(i);
+		load(n, "img/" + n + ".png");
+	}
+	for (int i = 1; i <= aac; i++) {
+		string n = prefix + "_a" + to_string(i);
+		load(n, "img/" + n + ".png");
+	}
+}
+
 
 void AssetManager::close() {
 	for (auto x : loadedTexture) {

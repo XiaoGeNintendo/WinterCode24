@@ -31,6 +31,7 @@
     <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Utility.cpp" />
+    <ClCompile Include="Vector2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Action.h" />
@@ -38,6 +39,7 @@
     <ClInclude Include="Actor.h" />
     <ClInclude Include="AssetManager.h" />
     <ClInclude Include="DifficultyScene.h" />
+    <ClInclude Include="EnemyInstance.h" />
     <ClInclude Include="ErrorConstant.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="GraphicsConstant.h" />

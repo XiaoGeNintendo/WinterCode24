@@ -21,13 +21,20 @@ struct EnemyData {
 	int defense;
 	int dropCoin;
 	int pathId;
+	int maxhp;
+	//Will randomize a path between pathId, pathId+1 and pathId+2
+	bool randomPath;
+	//walking animation count
+	int wac;
+	//attacking animation count
+	int aac;
 };
 
 struct WaveData {
 	int delay;
 	//Store ID
 	vector<string> enemies;
-	//Total length before next wave enters the map
+	//Countdown of this wave starts
 	int length;
 };
 
@@ -36,7 +43,7 @@ struct LevelInfo {
 	string background;
 
 	vector<VecI> deployPosition;
-	vector<int> path[16];
+	vector<VecI> path[16];
 	map<string, EnemyData> enemies;
 	vector<WaveData> waves;
 };
