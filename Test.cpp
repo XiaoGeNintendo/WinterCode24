@@ -92,6 +92,7 @@ void loadGame() {
 	}
 
 	am.loadEnemy("goblin", 2, 3);
+	am.loadEnemy("soldier", 2, 2);
 
 	//load fonts
 	am.preloadFont("global", "font/font.ttf");

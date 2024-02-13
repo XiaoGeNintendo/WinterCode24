@@ -8,14 +8,20 @@ int currentLevel = 0;
 int currentDifficulty = 0;
 
 LevelInfo levels[LEVEL_COUNT];
+//sample towers
 Tower* towers[TOWER_COUNT];
+function<Tower* ()> towersCreateFunction[TOWER_COUNT];
 
 void loadLevelInfos() {
 
 	towers[0] = new SoldierTower();
+	towersCreateFunction[0] = []() {return new SoldierTower(); };
 	towers[1] = new ArcherTower();
+	towersCreateFunction[1] = []() {return new ArcherTower(); };
 	towers[2] = new BomberTower();
+	towersCreateFunction[2] = []() {return new ArcherTower(); };
 	towers[3] = new MageTower();
+	towersCreateFunction[3] = []() {return new ArcherTower(); };
 
 	//load enemy
 	auto goblin = EnemyData();
@@ -24,6 +30,7 @@ void loadLevelInfos() {
 	goblin.attack = 1;
 	goblin.defense = 0;
 	goblin.dropCoin = 30;
+	goblin.attackDelay = 60;
 	goblin.id = "goblin";
 	goblin.maxhp = 10;
 	goblin.name = "Goblin";

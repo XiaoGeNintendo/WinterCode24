@@ -4,6 +4,7 @@
 #include <map>
 #include "Vector2.h"
 #include "Tower.h"
+#include <functional>
 using namespace std;
 
 #define LEVEL_COUNT 3
@@ -19,6 +20,7 @@ struct EnemyData {
 	int speed;
 	int attack;
 	int defense;
+	int attackDelay;
 	int dropCoin;
 	int pathId;
 	int maxhp;
@@ -46,9 +48,11 @@ struct LevelInfo {
 	vector<VecI> path[16];
 	map<string, EnemyData> enemies;
 	vector<WaveData> waves;
+	vector<pair<VecI, VecI>> obstacles;
 };
 
 extern LevelInfo levels[LEVEL_COUNT];
 extern Tower* towers[TOWER_COUNT];
+extern function<Tower* ()> towersCreateFunction[TOWER_COUNT];
 
 void loadLevelInfos();

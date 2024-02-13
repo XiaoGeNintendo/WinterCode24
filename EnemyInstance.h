@@ -1,11 +1,13 @@
 #pragma once
 #include "Vector2.h"
 #include "LevelInfo.h"
+#include "Tower.h"
+#include "Towers.h"
 
 enum EnemyState {
-	WALKING,
-	PAUSING,
-	FIGHTING
+	ENEMY_WALKING,
+	ENEMY_PAUSING,
+	ENEMY_FIGHTING
 };
 struct EnemyInstance {
 	int hp;
@@ -16,4 +18,7 @@ struct EnemyInstance {
 	vector<VecI> path;
 	int state;
 	int id;
+	vector<int> fighting;
+	int attackTimer;
+	bool noProcess;
 };

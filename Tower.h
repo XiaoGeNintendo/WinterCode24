@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include "Vector2.h"
 using namespace std;
 
 class Tower {
@@ -11,5 +12,10 @@ public:
 	int price;
 	vector<int> upgradeCost;
 
-	virtual void tick(void* instance, void* scene) = 0;
+	int level;
+	void* scene;
+	VecI position;
+	int at;
+	virtual void tick() = 0;
+	virtual void init() = 0;
 };

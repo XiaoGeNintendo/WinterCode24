@@ -1,22 +1,67 @@
 #include "Towers.h"
-#include "TowerInstance.h"
 #include "GameScene.h"
 
-void SoldierTower::tick(void* instance, void* scene)
+void SoldierTower::tick()
 {
-	TowerInstance* t = (TowerInstance*)instance;
-	GameScene* g = (GameScene*)instance;
+	if (lastSoldier > 0) {
+		lastSoldier--;
+	}
+
+	GameScene* sc = (GameScene*)scene;
+
+	int scc = 0;
+	for (auto soldier : sc->soldiers) {
+		if (soldier.from == at) {
+			scc++;
+		}
+	}
+
+	if (scc < 3+level && lastSoldier==0) {
+		auto newSoldier = new Sprite(am.animation("soldier_w",1,2),1e9);
+		newSoldier->position = this->position + VecI(rand()%10-5,rand()%20);
+		
+		sc->projectileSpriteGroup->addChild(newSoldier);
+
+		auto soldier = Soldier();
+		soldier.locator = newSoldier;
+		soldier.hp = 100;
+		soldier.state = SOLDIER_IDLE;
+		soldier.assemblyPoint = assemblyPosition;
+		soldier.atk = 3 + level;
+		soldier.from = at;
+		soldier.id = sc->soldiers.size();
+		sc->soldiers.push_back(soldier);
+
+		lastSoldier = 60 * (15 - level);
+	}
 
 }
 
-void ArcherTower::tick(void* instance, void* scene)
+void SoldierTower::init()
+{
+	assemblyPosition = position;
+}
+
+void ArcherTower::tick()
 {
 }
 
-void BomberTower::tick(void* instance, void* scene)
+void ArcherTower::init()
 {
 }
 
-void MageTower::tick(void* instance, void* scene)
+void BomberTower::tick()
+{
+}
+
+void BomberTower::init()
+{
+}
+
+void MageTower::tick()
+{
+}
+
+void MageTower::init()
 {
 }

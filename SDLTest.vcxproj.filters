@@ -125,9 +125,6 @@
     <ClInclude Include="Tower.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="TowerInstance.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Towers.h">
       <Filter>头文件</Filter>
     </ClInclude>

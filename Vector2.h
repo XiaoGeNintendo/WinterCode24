@@ -31,6 +31,14 @@ template <typename T> struct Vector2D {
         return *this;
     }
 
+    bool operator!=(Vector2D another) {
+        return x != another.x || y != another.y;
+    }
+
+    bool operator==(Vector2D another) {
+        return x == another.x && y == another.y;
+    }
+
     // Common functions
     T dot(const Vector2D& other) const {
         return x * other.x + y * other.y;

@@ -1,5 +1,27 @@
 #pragma once
 #include "Tower.h"
+#include "Sprite.h"
+
+enum SoldierState {
+	SOLDIER_IDLE,
+	SOLDIER_MOVING,
+	SOLDIER_FIGHTING
+};
+
+struct Soldier {
+	int state;
+	int hp;
+	VecI assemblyPoint;
+	int from;
+	Sprite* locator;
+	int fighting =-1;
+	vector<VecI> steps;
+	int attackTimer;
+	int atk;
+	bool noProcess;
+	//maintained by tower
+	int id;
+};
 
 class SoldierTower : public Tower {
 public:
@@ -11,7 +33,11 @@ public:
 		upgradeCost = { 110,140,170 };
 	}
 
-	void tick(void* instance, void* scene);
+	VecI assemblyPosition;
+
+	int lastSoldier;
+	void tick();
+	void init();
 };
 
 class MageTower : public Tower {
@@ -24,7 +50,8 @@ public:
 		upgradeCost = { 200,230,260 };
 	}
 
-	void tick(void* instance, void* scene);
+	void tick();
+	void init();
 };
 
 class BomberTower : public Tower {
@@ -37,7 +64,8 @@ public:
 		upgradeCost = { 160,200,240 };
 	}
 
-	void tick(void* instance, void* scene);
+	void tick();
+	void init();
 };
 
 
@@ -51,5 +79,6 @@ public:
 		upgradeCost = { 110,130,150 };
 	}
 
-	void tick(void* instance, void* scene);
+	void tick();
+	void init();
 };
