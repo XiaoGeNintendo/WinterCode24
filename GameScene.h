@@ -12,6 +12,9 @@
 #include <queue>
 using namespace std;
 
+#define pii pair<int,int>
+#define distType pair<long long,pair<int,int>>
+
 class GameScene : public Scene {
 public:
 	Sprite* bgImg;
@@ -64,62 +67,76 @@ public:
 	}
 
 	//yeah bfs is not suitable for this pathfinding as it's resource heavy but anyway
+	//yeah bfs performs like shit. A* is gud use A* now.
 	vector<VecI> pathfind(VecI start, VecI end, bool rev=true) {
 		printf("Pathfinding... from %d %d to %d %d\n",start.x,start.y,end.x,end.y);
 
-		int dx[] = { -1,0,1,1,1,0,-1 };
+		//fast exit
+		if (!fine(end) || !fine(start)) {
+			return {};
+		}
+
+		int dx[] = { -1,0,1,1,1,0,-1,-1 };
 		int dy[] = { -1,-1,-1,0,1,1,1,0 };
 
-		vector<vector<int>> dist;
-		vector<vector<VecI>> from;
+		map<pii, int> f,g;
+		map<pii, pii> from;
 
 		int n = bgImg->size.x;
 		int m = bgImg->size.y;
 
-		dist.resize(n);
-		from.resize(n);
-		for (int i = 0; i < n; i++) {
-			dist[i].resize(m);
-			from[i].resize(m);
-			for (int j = 0; j < m; j++) {
-				dist[i][j] = -1;
-				from[i][j] = { 0,0 };
-			}
-		}
 
+		priority_queue <distType,vector<distType>,greater<distType>> q;
 
-		queue<VecI> q;
-		q.push(start);
-		dist[start.x][start.y] = 0;
-		while (!q.empty() && dist[end.x][end.y]==-1) {
-			VecI last = q.front();
+		g[start.p()] = 0;
+		f[start.p()] = abs(end.x - start.x) + abs(end.y - start.y);
+
+		q.push({ f[start.p()],start.p() });
+
+		while (!q.empty()) {
+
+			distType last = q.top();
 			q.pop();
+
+			//printf("%d %d %d %d\n", q.size(), last.first, last.second.first, last.second.second);
+
+			if (last.first != f[last.second]){
+				continue;
+			}
+			if (last.second.first == end.x && last.second.second == end.y) {
+				vector<VecI> path;
+				
+				VecI now = end;
+				while (now != start) {
+					path.push_back(now);
+					now = from[now.p()];
+				}
+
+				if (rev) {
+					reverse(path.begin(), path.end());
+				}
+				return path;
+			}
+
 			for (int i = 0; i < 8; i++) {
-				VecI nw = last + VecI(dx[i], dy[i]);
-				if (nw.x >= 0 && nw.x < n && nw.y >= 0 && nw.y < m && fine(nw) && dist[nw.x][nw.y]==-1) {
-					dist[nw.x][nw.y] = dist[last.x][last.y] + 1;
-					from[nw.x][nw.y] = last;
-					q.push(nw);
+				pii nw;
+
+				nw.first = last.second.first + dx[i];
+				nw.second = last.second.second + dy[i];
+
+				if (nw.first >= 0 && nw.first < n && nw.second >= 0 && nw.second < m && fine(VecI(nw))) {
+					int myg = g[last.second] + 1;
+					if (!g.count(nw) || myg < g[nw]) {
+						from[nw] = last.second;
+						g[nw] = myg;
+						f[nw] = myg + abs(end.x - nw.first) + abs(end.y - nw.second);
+						q.push({ f[nw],nw });
+					}
 				}
 			}
 		}
 
-		vector<VecI> path;
-		if (dist[end.x][end.y] == -1) {
-			return path;
-		}
-
-		VecI now = end;
-		while (now != start) {
-			path.push_back(now);
-			now = from[now.x][now.y];
-		}
-
-		if (rev) {
-			reverse(path.begin(), path.end());
-		}
-
-		return path;
+		return {};
 	}
 
 	void init() override {

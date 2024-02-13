@@ -1,5 +1,7 @@
 #pragma once
 #include <cmath>
+#include <utility>
+using namespace std;
 
 template <typename T> struct Vector2D {
     T x, y;
@@ -7,6 +9,7 @@ template <typename T> struct Vector2D {
     // Constructors
     Vector2D() : x(0), y(0) {}
     Vector2D(T x, T y) : x(x), y(y) {}
+    Vector2D(pair<T, T> p) :x(p.first), y(p.second) {}
 
     // Arithmetic operators
     Vector2D operator+(const Vector2D& other) const {
@@ -31,11 +34,15 @@ template <typename T> struct Vector2D {
         return *this;
     }
 
-    bool operator!=(Vector2D another) {
+    bool operator<(Vector2D another) {
+        return this->p() < another.p();
+    }
+
+    bool operator!=(Vector2D another) const {
         return x != another.x || y != another.y;
     }
 
-    bool operator==(Vector2D another) {
+    bool operator==(Vector2D another) const {
         return x == another.x && y == another.y;
     }
 
@@ -56,6 +63,13 @@ template <typename T> struct Vector2D {
         return *this;
     }
 
+    T sum() const {
+        return x + y;
+    }
+
+    pair<T, T> p() const {
+        return make_pair(x, y);
+    }
 };
 
 #define VecI Vector2D<int>
