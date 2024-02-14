@@ -268,10 +268,13 @@ ActionInterpolation<int>* afont(Label* actor, int duration, int to);
 
 ActionInterpolation<int>* afont(Label* actor, int duration, int from, int to);
 
-
 ActionParallel* amove(Actor* actor, int duration, VecI from, VecI to, bool acenter=false);
 
 ActionParallel* amove(Actor* actor, int duration, VecI to, bool acenter = false);
+
+ActionParallel* asize(Actor* actor, int duration, VecI from, VecI to);
+
+ActionParallel* asize(Actor* actor, int duration, VecI to);
 
 ActionInterpolation<double>* arotate(Actor* actor, int duration, double from, double to);
 

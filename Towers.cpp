@@ -11,7 +11,7 @@ void SoldierTower::tick()
 
 	int scc = 0;
 	for (auto soldier : sc->soldiers) {
-		if (soldier.from == at) {
+		if (!soldier.noProcess && soldier.from == at) {
 			scc++;
 		}
 	}
@@ -24,7 +24,7 @@ void SoldierTower::tick()
 
 		auto soldier = Soldier();
 		soldier.locator = newSoldier;
-		soldier.hp = 100;
+		soldier.hp = SOLDIER_HP;
 		soldier.state = SOLDIER_IDLE;
 		soldier.assemblyPoint = assemblyPosition;
 		soldier.atk = 3 + level;

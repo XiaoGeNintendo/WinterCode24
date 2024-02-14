@@ -2,10 +2,14 @@
 #include "Tower.h"
 #include "Sprite.h"
 
+#define ASSEMBLY_RANGE 150
+#define SOLDIER_HP 100
+
 enum SoldierState {
 	SOLDIER_IDLE,
 	SOLDIER_MOVING,
-	SOLDIER_FIGHTING
+	SOLDIER_FIGHTING,
+	SOLDIER_RETREATING
 };
 
 struct Soldier {
@@ -31,6 +35,7 @@ public:
 		desc = "Send out soldiers to stop enemies";
 		price = 80;
 		upgradeCost = { 110,140,170 };
+		radius = 250;
 	}
 
 	VecI assemblyPosition;

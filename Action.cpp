@@ -38,6 +38,18 @@ ActionDelay* adelay(int duration)
 	return new ActionDelay(duration);
 }
 
+ActionParallel* asize(Actor* actor, int duration, VecI from, VecI to)
+{
+	return new ActionParallel({ new ActionInterpolation<int>(actor->size.x, duration, from.x, to.x, SINE),
+		new ActionInterpolation<int>(actor->size.y, duration, from.y, to.y, SINE) });	
+}
+
+ActionParallel* asize(Actor* actor, int duration, VecI to)
+{
+	return asize(actor, duration, actor->position, to);
+}
+
+
 ActionInterpolation<double>* arotate(Actor* actor, int duration, double from, double to) {
 	return new ActionInterpolation<double>(actor->rotation, duration, from, to, SINE);
 }

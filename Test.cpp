@@ -86,6 +86,12 @@ void loadGame() {
 	am.load("soldier_b", "img/soldier_b.png");
 	am.load("mage", "img/mage.png");
 	am.load("tooltip", "img/tooltip.png");
+	am.load("retreat", "img/retreat.png");
+	am.load("upgrade", "img/upgrade.png");
+	am.load("assemble", "img/assemble.png");
+	am.load("circle", "img/circle.png");
+	am.load("circle2", "img/circle2.png");
+	am.load("close", "img/close.png");
 
 	for (int i = 1; i <= 4; i++) {
 		am.load("flag" + to_string(i), "img/flag" + to_string(i) + ".png");
@@ -199,6 +205,9 @@ int main(int argc, char* args[])
 		{
 			//Wait remaining time
 			SDL_Delay(MS_PER_FRAME - frameTicks);
+		}
+		else {
+			printf("WARNING: Can't keep up! Is the server overloaded? Ticking took %d ms.\n",frameTicks);
 		}
 	}
 		
