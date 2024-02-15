@@ -172,8 +172,64 @@ void BomberTower::init()
 
 void MageTower::tick()
 {
+	if (lastTick > 0) {
+		lastTick--;
+	}
+
+	GameScene* sc = (GameScene*)scene;
+
+	for (auto& enemy : sc->enemyInstances) {
+		if (enemy.noProcess) {
+			if (sprites[enemy.id] != NULL) {
+				auto x = sprites[enemy.id];
+
+				actions.add(aseq({
+					aalpha(x,60,0),
+					new ActionRunnable([=]() {x->removeFromParent(); delete x; })
+					}));
+				sprites[enemy.id] = NULL;
+			}
+			continue;
+		}
+
+		if (!sprites.count(enemy.id)) {
+			sprites[enemy.id] = new Sprite(am.animation("magic",1,4),15);
+			sc->projectileSpriteGroup->addChild(sprites[enemy.id]);
+		}
+
+		auto& x = sprites[enemy.id];
+		x->position = d2i(enemy.position) + VecI(0, 10);
+
+		double dist = (enemy.position - i2d(this->position)).magnitude();
+		if (dist > radius) {
+			x->visible = false;
+		}
+		else {
+			x->visible = true;
+		}
+
+	}
+
+	if (lastTick <= 0) {
+		for (auto& enemy : sc->enemyInstances) {
+			if (enemy.noProcess) {
+				
+				continue;
+			}
+
+			double dist = (enemy.position - i2d(this->position)).magnitude();
+			if (dist > radius) {
+				continue;
+			}
+
+			enemy.hp -= 1;
+			sc->displayDamage(enemy.position, 1);
+		}
+		lastTick = 6 - level;
+	}
 }
 
-void MageTower::init()
+void MageTower::upgrade()
 {
+	radius = 130 + 20 * level;
 }

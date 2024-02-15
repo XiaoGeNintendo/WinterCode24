@@ -87,6 +87,7 @@ void loadGame() {
 	am.load("soldier", "img/soldier.png");
 	am.load("soldier_b", "img/soldier_b.png");
 	am.load("mage", "img/mage.png");
+	am.load("mage_b", "img/mage_b.png");
 	am.load("tooltip", "img/tooltip.png");
 	am.load("retreat", "img/retreat.png");
 	am.load("upgrade", "img/upgrade.png");
@@ -100,6 +101,9 @@ void loadGame() {
 
 	for (int i = 1; i <= 4; i++) {
 		am.load("flag" + to_string(i), "img/flag" + to_string(i) + ".png");
+	}
+	for (int i = 1; i <= 4; i++) {
+		am.load("magic" + to_string(i), "img/magic" + to_string(i) + ".png");
 	}
 
 	am.loadEnemy("goblin", 2, 3);

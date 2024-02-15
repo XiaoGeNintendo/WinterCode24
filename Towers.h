@@ -1,7 +1,8 @@
 #pragma once
 #include "Tower.h"
 #include "Sprite.h"
-
+#include <map>
+using namespace std;
 #define ASSEMBLY_RANGE 150
 #define SOLDIER_HP 100
 #define BOMB_RADIUS 85
@@ -55,10 +56,13 @@ public:
 		desc = "Cast armor-piercing magic towards the enemy";
 		price = 140;
 		upgradeCost = { 200,230,260 };
+		radius = 150;
 	}
-
+	
+	map<int, Sprite*> sprites;
+	int lastTick;
 	void tick();
-	void init();
+	void upgrade();
 };
 
 class BomberTower : public Tower {
