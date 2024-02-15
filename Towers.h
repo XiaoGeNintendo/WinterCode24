@@ -4,6 +4,7 @@
 
 #define ASSEMBLY_RANGE 150
 #define SOLDIER_HP 100
+#define BOMB_RADIUS 200
 
 enum SoldierState {
 	SOLDIER_IDLE,
@@ -68,8 +69,11 @@ public:
 		desc = "Throw bombs that deal AOE damage";
 		price = 110;
 		upgradeCost = { 160,200,240 };
+		radius = 225;
 	}
 
+	int lastBomb;
+	void upgrade();
 	void tick();
 	void init();
 };
@@ -83,7 +87,7 @@ public:
 		desc = "Shoot fast arrows towards the enemy";
 		price = 90;
 		upgradeCost = { 110,130,150 };
-		radius = 225;
+		radius = 275;
 	}
 
 	int lastArrow;

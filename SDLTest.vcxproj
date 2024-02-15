@@ -40,6 +40,7 @@
     <ClInclude Include="ActionManager.h" />
     <ClInclude Include="Actor.h" />
     <ClInclude Include="AssetManager.h" />
+    <ClInclude Include="BombSprite.h" />
     <ClInclude Include="DifficultyScene.h" />
     <ClInclude Include="EnemyInstance.h" />
     <ClInclude Include="ErrorConstant.h" />

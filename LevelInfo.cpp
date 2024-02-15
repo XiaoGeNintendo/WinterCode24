@@ -19,7 +19,7 @@ void loadLevelInfos() {
 	towers[1] = new ArcherTower();
 	towersCreateFunction[1] = []() {return new ArcherTower(); };
 	towers[2] = new BomberTower();
-	towersCreateFunction[2] = []() {return new ArcherTower(); };
+	towersCreateFunction[2] = []() {return new BomberTower(); };
 	towers[3] = new MageTower();
 	towersCreateFunction[3] = []() {return new ArcherTower(); };
 

@@ -1,5 +1,6 @@
 #include "Towers.h"
 #include "GameScene.h"
+#include "BombSprite.h"
 
 void SoldierTower::upgrade() {
 	radius = 230 + 20 * level;
@@ -59,7 +60,7 @@ void ArcherTower::tick()
 
 	GameScene* sc = (GameScene*)scene;
 
-	if (lastArrow == 0) {
+	if (lastArrow <= 0) {
 
 		int count = 0;
 
@@ -73,14 +74,14 @@ void ArcherTower::tick()
 				//add new projectile
 				Sprite* arrow = new Sprite(am["arrow"]);
 				arrow->position = this->position - VecI(0, 50);
-				arrow->rotation = atan2(enemy.position.x - this->position.x, enemy.position.y - this->position.y) / PI * 180;
+				arrow->rotation = atan2(enemy.position.y - arrow->position.y, enemy.position.x - arrow->position.x) / PI * 180 + 180;
 
 				EnemyInstance* e = &enemy;
 				actions.add(aseq({
-					amove(arrow,10,d2i(enemy.position)),
+					amove(arrow,10,d2i(enemy.position+enemy.speed*5)),
 					new ActionRunnable([=]() {
 						if (!e->noProcess) {
-							e->hp -= (15 + 5 * level) - e->data->defense;
+							e->hp -= (5 + 5 * level) - e->data->defense; //remove enemy hp
 						}
 
 						arrow->removeFromParent();
@@ -100,9 +101,62 @@ void ArcherTower::tick()
 	}
 }
 
+void BomberTower::upgrade() {
+	radius = 130 + 20 * level;
+}
 
 void BomberTower::tick()
 {
+	if (lastBomb > 0) {
+		lastBomb--;
+	}
+
+	GameScene* sc = (GameScene*)scene;
+
+	if (lastBomb <= 0) {
+		for (auto& enemy : sc->enemyInstances) {
+			if (enemy.noProcess) {
+				continue;
+			}
+
+			double dist = (enemy.position - i2d(this->position)).magnitude();
+			if (dist > radius) {
+				continue;
+			}
+
+			//shoot bomb at it
+			VecD shootPos = i2d(this->position - VecI(0, 120));
+
+			const int IGNITE = 120;
+			
+			auto bomb = new BombSprite(am["bomb"], shootPos, enemy.position + enemy.speed * IGNITE / 2, VecD(shootPos.x, 0), IGNITE);
+			bomb->realPosition = shootPos;
+			bomb->size = bomb->size * 2;
+			bomb->ignite = [=]() {
+				for (auto& enemy : sc->enemyInstances) {
+					if (enemy.noProcess) {
+						continue;
+					}
+
+
+					double dist = (enemy.position - bomb->realPosition).magnitude();
+					if (dist > BOMB_RADIUS) {
+						continue;
+					}
+
+					enemy.hp -= (90 + 10 * level) * (BOMB_RADIUS - dist) / BOMB_RADIUS - enemy.data->defense;
+				}
+
+				bomb->texture = am["boom"];
+				bomb->size = am["boom"]->size();
+				actions.add(aseq({ aalpha(bomb,30,0),new ActionRunnable([=]() {bomb->removeFromParent(); delete bomb; }) }));
+
+			};
+			sc->projectileSpriteGroup->addChild(bomb);
+			lastBomb = 60 * 3 - 30 * level;
+			break;
+		}
+	}
 }
 
 void BomberTower::init()

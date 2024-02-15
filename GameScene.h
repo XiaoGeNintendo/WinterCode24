@@ -391,7 +391,7 @@ private:
 
 					//close previous menu
 					buildUi->visible = false;
-
+					assemblyIndicator->visible = false;
 					//set opening ui first
 					this->openingUi = __opening;
 
@@ -831,14 +831,15 @@ public:
 
 
 		//add sprite group
-		towerSpriteGroup = new Actor();
-		bgGroup->addChild(towerSpriteGroup);
-
 		enemySpriteGroup = new Actor();
 		bgGroup->addChild(enemySpriteGroup);
 
 		projectileSpriteGroup = new Actor();
 		bgGroup->addChild(projectileSpriteGroup);
+
+		towerSpriteGroup = new Actor();
+		bgGroup->addChild(towerSpriteGroup);
+
 
 		//build tooltip
 		tooltipWindow = new Sprite(am["tooltip"]);
