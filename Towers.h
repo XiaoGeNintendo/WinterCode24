@@ -4,7 +4,7 @@
 
 #define ASSEMBLY_RANGE 150
 #define SOLDIER_HP 100
-#define BOMB_RADIUS 200
+#define BOMB_RADIUS 85
 
 enum SoldierState {
 	SOLDIER_IDLE,

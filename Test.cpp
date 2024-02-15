@@ -107,6 +107,7 @@ void loadGame() {
 
 	//load fonts
 	am.preloadFont("global", "font/font.ttf");
+	am.preloadFont("damage", "font/damage.ttf");
 
 	/* //test code here
 	Sprite* logo = new Sprite(am["zyq"]);

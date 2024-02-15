@@ -4,7 +4,9 @@
 #include "Utility.h"
 void Actor::render(SDL_Renderer* renderer) {
 
-	for (auto child : children) {
+	for (int i = 0; i < children.size(); i++) {
+		auto child = children[i];
+		//printf("%p %d\n", child,i);
 		if (child->visible) {
 			child->render(renderer);
 		}

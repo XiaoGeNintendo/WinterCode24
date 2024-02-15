@@ -10,6 +10,8 @@
 #include <cassert>
 #include "Towers.h"
 #include <queue>
+#include "Random.h"
+#include "DamageLabel.h"
 using namespace std;
 
 #define pii pair<int,int>
@@ -87,7 +89,7 @@ private:
 					enemy.attackTimer = enemy.data->attackDelay;
 					auto& atk = soldiers[enemy.fighting[0]];
 					atk.hp -= enemy.data->attack;
-					printf("Soldier %d hp - %d = %d\n", enemy.fighting[0], enemy.data->attack, atk.hp);
+					displayDamage(atk.locator->position, enemy.data->attack);
 				}
 			}
 
@@ -154,7 +156,7 @@ private:
 				if (bestEnemy.second != -1) { //find appropriate enemy
 					auto& enemy = enemyInstances[bestEnemy.second];
 					//pathfind soldier
-					auto path = pathfind(soldier.locator->position, d2i(enemy.position) - VecI(20 + rand() % 5, rand() % 10), false);
+					auto path = pathfind(soldier.locator->position, d2i(enemy.position) - VecI(randInt(20,25), randInt(-20,20)), false);
 					if (path.size() == 0) {
 						continue;
 					}
@@ -186,7 +188,7 @@ private:
 					soldier.attackTimer = 60;
 					auto& atk = enemyInstances[soldier.fighting];
 					atk.hp -= soldier.atk - atk.data->defense;
-					printf("Enemy %d hp - %d = %d\n", soldier.fighting, soldier.atk - atk.data->defense, atk.hp);
+					displayDamage(atk.position, soldier.atk - atk.data->defense);
 				}
 			}
 			else if (soldier.state == SOLDIER_RETREATING) {
@@ -314,7 +316,7 @@ private:
 				auto instance = EnemyInstance();
 				instance.data = &lvl.enemies[lvl.waves[currentWave].enemies[nextEnemy]];
 				instance.hp = instance.data->maxhp;
-				instance.path = lvl.path[instance.data->randomPath ? instance.data->pathId + rand() % 3 : instance.data->pathId];
+				instance.path = lvl.path[instance.data->randomPath ? instance.data->pathId + randInt(0,2) : instance.data->pathId];
 				instance.position = i2d(instance.path[0]);
 				instance.nextPoint = 1;
 				instance.state = ENEMY_WALKING;
@@ -662,7 +664,7 @@ private:
 
 						vector<VecI> path;
 						do {
-							path = pathfind(s.locator->position, st->assemblyPosition + VecI(rand() % 30 - 15, rand() % 30 - 15), false);
+							path = pathfind(s.locator->position, st->assemblyPosition + VecI(randInt(-15,15), randInt(-15,15)), false);
 						} while (path.empty());
 						s.state = SOLDIER_RETREATING;
 						s.steps = path;
@@ -745,6 +747,28 @@ public:
 	int nextEnemyCountdown,nextWaveCountdown;
 	int globalEnemyId = 0;
 
+	void displayDamage(VecD pos, int amount) {
+
+		DamageLabel* lbl;
+		if (amount <= 0) {
+			lbl = new DamageLabel("BLOCKED");
+			lbl->color = { 33,33,33,150 };
+			lbl->markDirty();
+		}
+		else {
+			lbl = new DamageLabel(to_string(amount));
+		}
+
+		lbl->realPosition = pos;
+		
+		//should be pooling but i am lazy
+		actions.add(aseq({ adelay(15),aalpha(lbl,15,0),new ActionRunnable([=]() {lbl->removeFromParent(); delete lbl; }) }));
+		projectileSpriteGroup->addChild(lbl);
+	}
+
+	void displayDamage(VecI pos, int amount) {
+		displayDamage(i2d(pos), amount);
+	}
 	void init() override {
 		bgGroup = new Actor();
 		fgGroup = new Actor();

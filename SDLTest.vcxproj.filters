@@ -60,6 +60,9 @@
     <ClCompile Include="DifficultyScene.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Random.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Texture.h">
@@ -132,6 +135,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="BombSprite.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DamageLabel.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Random.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,6 +1,7 @@
 #include "Towers.h"
 #include "GameScene.h"
 #include "BombSprite.h"
+#include "Random.h"
 
 void SoldierTower::upgrade() {
 	radius = 230 + 20 * level;
@@ -24,7 +25,7 @@ void SoldierTower::tick()
 
 	if (scc < 3+level && lastSoldier<=0) {
 		auto newSoldier = new Sprite(am.animation("soldier_w",1,2),1e9);
-		newSoldier->position = this->position + VecI(rand()%10-5,rand()%20);
+		newSoldier->position = this->position + VecI(randInt(-20,20),randInt(10,20));
 		
 		sc->projectileSpriteGroup->addChild(newSoldier);
 
@@ -81,7 +82,9 @@ void ArcherTower::tick()
 					amove(arrow,10,d2i(enemy.position+enemy.speed*5)),
 					new ActionRunnable([=]() {
 						if (!e->noProcess) {
-							e->hp -= (5 + 5 * level) - e->data->defense; //remove enemy hp
+							int dmg = (5 + 5 * level) - e->data->defense;
+							e->hp -= dmg; //remove enemy hp
+							sc->displayDamage(e->position, dmg);
 						}
 
 						arrow->removeFromParent();
@@ -144,7 +147,11 @@ void BomberTower::tick()
 						continue;
 					}
 
-					enemy.hp -= (90 + 10 * level) * (BOMB_RADIUS - dist) / BOMB_RADIUS - enemy.data->defense;
+					int dmg = (60 + 10 * level) * (BOMB_RADIUS - dist) / BOMB_RADIUS - enemy.data->defense;
+					if (dmg > 0) {
+						enemy.hp -= dmg;
+						sc->displayDamage(enemy.position, dmg);
+					}
 				}
 
 				bomb->texture = am["boom"];

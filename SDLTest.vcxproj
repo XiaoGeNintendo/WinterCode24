@@ -26,6 +26,7 @@
     <ClCompile Include="GraphicsConstant.cpp" />
     <ClCompile Include="Label.cpp" />
     <ClCompile Include="LevelInfo.cpp" />
+    <ClCompile Include="Random.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Test.cpp" />
     <ClCompile Include="Texture.cpp" />
@@ -41,6 +42,7 @@
     <ClInclude Include="Actor.h" />
     <ClInclude Include="AssetManager.h" />
     <ClInclude Include="BombSprite.h" />
+    <ClInclude Include="DamageLabel.h" />
     <ClInclude Include="DifficultyScene.h" />
     <ClInclude Include="EnemyInstance.h" />
     <ClInclude Include="ErrorConstant.h" />
@@ -50,6 +52,7 @@
     <ClInclude Include="LabelButton.h" />
     <ClInclude Include="LevelInfo.h" />
     <ClInclude Include="MapScene.h" />
+    <ClInclude Include="Random.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="Stage.h" />
