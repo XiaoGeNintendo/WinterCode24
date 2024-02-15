@@ -41,6 +41,7 @@ public:
 	VecI assemblyPosition;
 
 	int lastSoldier;
+	void upgrade();
 	void tick();
 	void init();
 };
@@ -82,8 +83,10 @@ public:
 		desc = "Shoot fast arrows towards the enemy";
 		price = 90;
 		upgradeCost = { 110,130,150 };
+		radius = 225;
 	}
 
+	int lastArrow;
 	void tick();
-	void init();
+	void upgrade();
 };

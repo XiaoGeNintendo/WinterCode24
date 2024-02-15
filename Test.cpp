@@ -81,7 +81,9 @@ void loadGame() {
 	am.load("goldBar", "img/goldbar.png");
 	am.load("transition", "img/transition.png");
 	am.load("bomber", "img/bomber.png");
+	am.load("bomber_b", "img/bomber_b.png");
 	am.load("archer", "img/archer.png");
+	am.load("archer_b", "img/archer_b.png");
 	am.load("soldier", "img/soldier.png");
 	am.load("soldier_b", "img/soldier_b.png");
 	am.load("mage", "img/mage.png");
@@ -92,6 +94,7 @@ void loadGame() {
 	am.load("circle", "img/circle.png");
 	am.load("circle2", "img/circle2.png");
 	am.load("close", "img/close.png");
+	am.load("arrow", "img/arrow.png");
 
 	for (int i = 1; i <= 4; i++) {
 		am.load("flag" + to_string(i), "img/flag" + to_string(i) + ".png");

@@ -32,7 +32,7 @@ void loadLevelInfos() {
 	goblin.dropCoin = 30;
 	goblin.attackDelay = 60;
 	goblin.id = "goblin";
-	goblin.maxhp = 10;
+	goblin.maxhp = 100;
 	goblin.name = "Goblin";
 	goblin.pathId = 0;
 	goblin.randomPath = true;

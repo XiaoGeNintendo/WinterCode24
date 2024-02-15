@@ -17,7 +17,7 @@ struct EnemyData {
 	string id;
 	string name;
 	string img;
-	int speed;
+	double speed;
 	int attack;
 	int defense;
 	int attackDelay;

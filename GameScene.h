@@ -399,7 +399,7 @@ private:
 					assert(it != NULL);
 
 					if (it->id == "soldier") {
-						upgradeIcons[2]->visible = true;
+						upgradeIcons[3]->visible = true;
 						for (int i = 0; i < 4; i++) {
 							double angle = 2 * PI / 4 * i;
 							double radius = 70;
@@ -410,6 +410,7 @@ private:
 
 					}
 					else {
+						upgradeIcons[3]->visible = false;
 						for (int i = 0; i < 3; i++) {
 							double angle = 2 * PI / 3 * i;
 							double radius = 70;
@@ -418,7 +419,6 @@ private:
 							actions.add(amove(upgradeIcons[i], 30, { 0,0 }, standbyPos));
 						}
 
-						upgradeIcons[2]->visible = false;
 					}
 					upgradeUi->position = it->position;
 					upgradeUi->visible = true;
@@ -466,6 +466,7 @@ private:
 			deployer[i]->setClick([=]() {
 				if (openingUi == i) {
 					buildUi->visible=false;
+					openingUi = -1;
 					return;
 				}
 				//close previous menu
@@ -564,9 +565,10 @@ private:
 					return;
 				}
 
+				//really upgrade
 				playerGold -= ti->upgradeCost[ti->level - 1];
 				ti->level++;
-
+				ti->upgrade();
 
 				//close ui
 				upgradeUi->visible = false;
