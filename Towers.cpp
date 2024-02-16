@@ -29,11 +29,13 @@ void SoldierTower::tick()
 		auto targetPos= this->position + VecI(randInt(-20, 20), randInt(10, 20));
 		newSoldier->position = targetPos - VecI(0, 50);
 		newSoldier->color.a = 0;
+
+		newSoldier->addChild(sc->generateHpBar());
 		sc->projectileSpriteGroup->addChild(newSoldier);
 
 		auto soldier = Soldier();
 		soldier.locator = newSoldier;
-		soldier.hp = SOLDIER_HP;
+		soldier.maxhp = soldier.hp = SOLDIER_HP;
 		soldier.state = SOLDIER_IDLE;
 		soldier.assemblyPoint = assemblyPosition;
 		soldier.atk = 30 + 10 * level;
@@ -47,7 +49,7 @@ void SoldierTower::tick()
 						vector<VecI> path;
 						auto mys = &sc->soldiers[id];
 						do {
-							path = sc->pathfind(mys->locator->position, assemblyPosition + VecI(randInt(-15,15), randInt(-15,15)), false);
+							path = sc->pathfind(mys->locator->position, assemblyPosition + VecI(randInt(-SOLDIER_WANDER_RANGE, SOLDIER_WANDER_RANGE), randInt(-SOLDIER_WANDER_RANGE, SOLDIER_WANDER_RANGE)), false);
 						} while (path.empty());
 						mys->state = SOLDIER_RETREATING;
 						mys->steps = path;

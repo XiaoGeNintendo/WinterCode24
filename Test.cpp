@@ -98,6 +98,8 @@ void loadGame() {
 	am.load("arrow", "img/arrow.png");
 	am.load("bomb", "img/bomb.png");
 	am.load("boom", "img/boom.png");
+	am.load("hpbar1", "img/hpbar1.png");
+	am.load("hpbar2", "img/hpbar2.png");
 
 	for (int i = 1; i <= 4; i++) {
 		am.load("flag" + to_string(i), "img/flag" + to_string(i) + ".png");

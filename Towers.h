@@ -6,6 +6,7 @@ using namespace std;
 #define ASSEMBLY_RANGE 150
 #define SOLDIER_HP 100
 #define BOMB_RADIUS 85
+#define SOLDIER_WANDER_RANGE 50
 
 enum SoldierState {
 	SOLDIER_IDLE,
@@ -27,6 +28,7 @@ struct Soldier {
 	bool noProcess;
 	//maintained by tower
 	int id;
+	int maxhp;
 };
 
 class SoldierTower : public Tower {

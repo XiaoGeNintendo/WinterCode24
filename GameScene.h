@@ -20,11 +20,20 @@ using namespace std;
 
 class GameScene : public Scene {
 private:
+
+
 	void tickEnemy() {
 
 		//ticking enemies
 		for (int i = 0; i < enemyInstances.size(); i++) {
 			EnemyInstance& enemy = enemyInstances[i];
+
+			auto sp = enemySprites[enemy.id];
+			//high priority job!
+			if (sp!=NULL && sp->children.size() != 0) {
+				assert(sp->children[0]->children.size() != 0);
+				sp->children[0]->children[0]->size.x = max(1.0 * 20 * enemy.hp / enemy.maxhp, 0.0);
+			}
 
 			if (enemy.noProcess) {
 				continue;
@@ -105,7 +114,6 @@ private:
 			}
 
 			//linking sprites
-			auto sp = enemySprites[enemy.id];
 			sp->position = d2i(enemy.position);
 			sp->flipX = (enemy.speed.x > 0);
 			if (enemy.state == ENEMY_WALKING) {
@@ -118,6 +126,7 @@ private:
 				sp->setAnimation(am.animation(enemy.data->id + "_a", 1, enemy.data->wac), 20);
 				sp->flipX = false;
 			}
+
 		}
 	}
 
@@ -126,6 +135,12 @@ private:
 		for (int i = 0; i < soldiers.size(); i++) {
 			auto& soldier = soldiers[i];
 
+			auto sp = soldier.locator;
+			//high priority job!
+			if (sp != NULL && sp->children.size() != 0) {
+				assert(sp->children[0]->children.size() != 0);
+				sp->children[0]->children[0]->size.x = max(1.0 * 20 * soldier.hp / soldier.maxhp, 0.0);
+			}
 			if (soldier.noProcess) {
 				continue;
 			}
@@ -254,7 +269,7 @@ private:
 				//generate enemy
 				auto instance = EnemyInstance();
 				instance.data = &lvl.enemies[lvl.waves[currentWave].enemies[nextEnemy]];
-				instance.hp = instance.data->maxhp;
+				instance.maxhp = instance.hp = instance.data->maxhp;
 				instance.path = lvl.path[instance.data->randomPath ? instance.data->pathId + randInt(0,2) : instance.data->pathId];
 				instance.position = i2d(instance.path[0]);
 				instance.nextPoint = 1;
@@ -265,7 +280,9 @@ private:
 				//generate sprite
 				auto enemySprite = new Sprite(am.animation(instance.data->id + "_w", 1, instance.data->wac), 20);
 				enemySprite->color.a = 0;
-				actions.add(aalpha(enemySprite, 60, 255));
+				actions.add(aseq({ aalpha(enemySprite, 60, 255), new ActionRunnable([=]() {
+					enemySprite->addChild(generateHpBar()); }) }));
+				
 				enemySprites[instance.id] = enemySprite;
 				
 				enemySpriteGroup->addChild(enemySprite);
@@ -633,7 +650,7 @@ private:
 
 						vector<VecI> path;
 						do {
-							path = pathfind(s.locator->position, st->assemblyPosition + VecI(randInt(-15,15), randInt(-15,15)), false);
+							path = pathfind(s.locator->position, st->assemblyPosition + VecI(randInt(-SOLDIER_WANDER_RANGE, SOLDIER_WANDER_RANGE), randInt(-SOLDIER_WANDER_RANGE, SOLDIER_WANDER_RANGE)), false);
 						} while (path.empty());
 						s.state = SOLDIER_RETREATING;
 						s.steps = path;
@@ -718,6 +735,14 @@ public:
 	int nextEnemyCountdown,nextWaveCountdown;
 	int globalEnemyId = 0;
 
+
+	Actor* generateHpBar() {
+		auto bar1 = new Sprite(am["hpbar1"]);
+		auto bar2 = new Sprite(am["hpbar2"]);
+		bar1->position = VecI(6, -2);
+		bar1->addChild(bar2);
+		return bar1;
+	}
 
 	//yeah bfs is not suitable for this pathfinding as it's resource heavy but anyway
 	//yeah bfs performs like shit. A* is gud use A* now.

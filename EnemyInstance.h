@@ -11,6 +11,7 @@ enum EnemyState {
 };
 struct EnemyInstance {
 	int hp;
+	int maxhp;
 	VecD position;
 	EnemyData* data;
 	int nextPoint;
