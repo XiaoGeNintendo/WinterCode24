@@ -23,10 +23,12 @@ void SoldierTower::tick()
 		}
 	}
 
-	if (scc < 3+level && lastSoldier<=0) {
+	if (scc < 3+level && (lastSoldier<=0 || freeSoldier>0)) {
 		auto newSoldier = new Sprite(am.animation("soldier_w",1,2),1e9);
-		newSoldier->position = this->position + VecI(randInt(-20,20),randInt(10,20));
 		
+		auto targetPos= this->position + VecI(randInt(-20, 20), randInt(10, 20));
+		newSoldier->position = targetPos - VecI(0, 50);
+		newSoldier->color.a = 0;
 		sc->projectileSpriteGroup->addChild(newSoldier);
 
 		auto soldier = Soldier();
@@ -39,7 +41,23 @@ void SoldierTower::tick()
 		soldier.id = sc->soldiers.size();
 		sc->soldiers.push_back(soldier);
 
+		int id = sc->soldiers.size()-1;
+
+		actions.add(aseq({ apara({ aalpha(newSoldier,30,255),amove(newSoldier,30,targetPos) }),new ActionRunnable([=]() {
+						vector<VecI> path;
+						auto mys = &sc->soldiers[id];
+						do {
+							path = sc->pathfind(mys->locator->position, assemblyPosition + VecI(randInt(-15,15), randInt(-15,15)), false);
+						} while (path.empty());
+						mys->state = SOLDIER_RETREATING;
+						mys->steps = path;
+			}) }));
+
 		lastSoldier = 60 * (15 - level);
+
+		if (freeSoldier > 0) {
+			freeSoldier--;
+		}
 	}
 
 }
@@ -47,6 +65,7 @@ void SoldierTower::tick()
 void SoldierTower::init()
 {
 	assemblyPosition = position;
+	freeSoldier = 3;
 }
 
 void ArcherTower::upgrade() {
@@ -79,7 +98,7 @@ void ArcherTower::tick()
 
 				EnemyInstance* e = &enemy;
 				actions.add(aseq({
-					amove(arrow,10,d2i(enemy.position+enemy.speed*5)),
+					amove(arrow,10,d2i(enemy.position + (enemy.state == ENEMY_WALKING ? enemy.speed * 5 : VecD(0,0)))),
 					new ActionRunnable([=]() {
 						if (!e->noProcess) {
 							int dmg = (5 + 5 * level) - e->data->defense;
@@ -100,7 +119,7 @@ void ArcherTower::tick()
 				}
 			}
 		}
-		lastArrow = 45 - 5 * level;
+		lastArrow = 45;
 	}
 }
 
@@ -132,7 +151,7 @@ void BomberTower::tick()
 
 			const int IGNITE = 120;
 			
-			auto bomb = new BombSprite(am["bomb"], shootPos, enemy.position + enemy.speed * IGNITE / 2, VecD(shootPos.x, 0), IGNITE);
+			auto bomb = new BombSprite(am["bomb"], shootPos, enemy.position + (enemy.state==ENEMY_WALKING ? enemy.speed * IGNITE / 2 : VecD(0,0)), VecD(shootPos.x, 0), IGNITE);
 			bomb->realPosition = shootPos;
 			bomb->size = bomb->size * 2;
 			bomb->ignite = [=]() {
@@ -198,7 +217,7 @@ void MageTower::tick()
 		}
 
 		auto& x = sprites[enemy.id];
-		x->position = d2i(enemy.position) + VecI(0, 10);
+		x->position = d2i(enemy.position) + VecI(10, 10);
 
 		double dist = (enemy.position - i2d(this->position)).magnitude();
 		if (dist > radius) {

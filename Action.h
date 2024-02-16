@@ -285,3 +285,5 @@ ActionParallel* apara(vector<Action*> actions);
 ActionSequence* aseq(vector<Action*> actions);
 
 ActionDelay* adelay(int duration);
+
+ActionRunnable* aremove(Actor* actor);

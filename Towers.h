@@ -43,6 +43,7 @@ public:
 	VecI assemblyPosition;
 
 	int lastSoldier;
+	int freeSoldier;
 	void upgrade();
 	void tick();
 	void init();

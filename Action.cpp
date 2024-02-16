@@ -38,6 +38,11 @@ ActionDelay* adelay(int duration)
 	return new ActionDelay(duration);
 }
 
+ActionRunnable* aremove(Actor* actor)
+{
+	return new ActionRunnable([=]() {actor->removeFromParent(); delete actor; });
+}
+
 ActionParallel* asize(Actor* actor, int duration, VecI from, VecI to)
 {
 	return new ActionParallel({ new ActionInterpolation<int>(actor->size.x, duration, from.x, to.x, SINE),

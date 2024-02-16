@@ -52,6 +52,7 @@
     <ClInclude Include="LabelButton.h" />
     <ClInclude Include="LevelInfo.h" />
     <ClInclude Include="MapScene.h" />
+    <ClInclude Include="ParticleSprite.h" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Sprite.h" />

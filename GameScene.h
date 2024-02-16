@@ -11,6 +11,7 @@
 #include "Towers.h"
 #include <queue>
 #include "Random.h"
+#include "ParticleSprite.h"
 #include "DamageLabel.h"
 using namespace std;
 
@@ -33,9 +34,19 @@ private:
 			if (enemy.hp <= 0) {
 				//TODO Enemy dead
 
+				auto& s = enemySprites[enemy.id];
+
+				for (int j = 0; j < enemy.data->dropCoin/10; j++) {
+					auto coin = new ParticleSprite(am.animation("coin",1,4),10);
+					coin->realPosition = enemy.position;
+
+					projectileSpriteGroup->addChild(coin);
+					actions.add(aseq({ adelay(45),aalpha(coin,15,0),aremove(coin) }));
+				}
+
+				actions.add(aseq({ aalpha(s,30,0),aremove(s)}));
+
 				playerGold += enemy.data->dropCoin;
-				enemySprites[enemy.id]->removeFromParent();
-				delete enemySprites[enemy.id];
 				enemySprites[enemy.id] = NULL;
 				enemy.noProcess = true;
 				continue;
@@ -225,78 +236,6 @@ private:
 		return true;
 	}
 
-	//yeah bfs is not suitable for this pathfinding as it's resource heavy but anyway
-	//yeah bfs performs like shit. A* is gud use A* now.
-	vector<VecI> pathfind(VecI start, VecI end, bool rev = true) {
-		printf("Pathfinding... from %d %d to %d %d\n", start.x, start.y, end.x, end.y);
-
-		//fast exit
-		if (!fine(end) || !fine(start)) {
-			return {};
-		}
-
-		int dx[] = { -1,0,1,1,1,0,-1,-1 };
-		int dy[] = { -1,-1,-1,0,1,1,1,0 };
-
-		map<pii, int> f, g;
-		map<pii, pii> from;
-
-		int n = bgImg->size.x;
-		int m = bgImg->size.y;
-
-
-		priority_queue <distType, vector<distType>, greater<distType>> q;
-
-		g[start.p()] = 0;
-		f[start.p()] = abs(end.x - start.x) + abs(end.y - start.y);
-
-		q.push({ f[start.p()],start.p() });
-
-		while (!q.empty()) {
-
-			distType last = q.top();
-			q.pop();
-
-			//printf("%d %d %d %d\n", q.size(), last.first, last.second.first, last.second.second);
-
-			if (last.first != f[last.second]) {
-				continue;
-			}
-			if (last.second.first == end.x && last.second.second == end.y) {
-				vector<VecI> path;
-
-				VecI now = end;
-				while (now != start) {
-					path.push_back(now);
-					now = from[now.p()];
-				}
-
-				if (rev) {
-					reverse(path.begin(), path.end());
-				}
-				return path;
-			}
-
-			for (int i = 0; i < 8; i++) {
-				pii nw;
-
-				nw.first = last.second.first + dx[i];
-				nw.second = last.second.second + dy[i];
-
-				if (nw.first >= 0 && nw.first < n && nw.second >= 0 && nw.second < m && fine(VecI(nw))) {
-					int myg = g[last.second] + 1;
-					if (!g.count(nw) || myg < g[nw]) {
-						from[nw] = last.second;
-						g[nw] = myg;
-						f[nw] = myg + abs(end.x - nw.first) + abs(end.y - nw.second);
-						q.push({ f[nw],nw });
-					}
-				}
-			}
-		}
-
-		return {};
-	}
 
 	void tickWave() {
 
@@ -325,7 +264,10 @@ private:
 
 				//generate sprite
 				auto enemySprite = new Sprite(am.animation(instance.data->id + "_w", 1, instance.data->wac), 20);
+				enemySprite->color.a = 0;
+				actions.add(aalpha(enemySprite, 60, 255));
 				enemySprites[instance.id] = enemySprite;
+				
 				enemySpriteGroup->addChild(enemySprite);
 
 				nextEnemy++;
@@ -747,6 +689,80 @@ public:
 	int nextEnemyCountdown,nextWaveCountdown;
 	int globalEnemyId = 0;
 
+
+	//yeah bfs is not suitable for this pathfinding as it's resource heavy but anyway
+	//yeah bfs performs like shit. A* is gud use A* now.
+	vector<VecI> pathfind(VecI start, VecI end, bool rev = true) {
+		printf("Pathfinding... from %d %d to %d %d\n", start.x, start.y, end.x, end.y);
+
+		//fast exit
+		if (!fine(end) || !fine(start)) {
+			return {};
+		}
+
+		int dx[] = { -1,0,1,1,1,0,-1,-1 };
+		int dy[] = { -1,-1,-1,0,1,1,1,0 };
+
+		map<pii, int> f, g;
+		map<pii, pii> from;
+
+		int n = bgImg->size.x;
+		int m = bgImg->size.y;
+
+
+		priority_queue <distType, vector<distType>, greater<distType>> q;
+
+		g[start.p()] = 0;
+		f[start.p()] = abs(end.x - start.x) + abs(end.y - start.y);
+
+		q.push({ f[start.p()],start.p() });
+
+		while (!q.empty()) {
+
+			distType last = q.top();
+			q.pop();
+
+			//printf("%d %d %d %d\n", q.size(), last.first, last.second.first, last.second.second);
+
+			if (last.first != f[last.second]) {
+				continue;
+			}
+			if (last.second.first == end.x && last.second.second == end.y) {
+				vector<VecI> path;
+
+				VecI now = end;
+				while (now != start) {
+					path.push_back(now);
+					now = from[now.p()];
+				}
+
+				if (rev) {
+					reverse(path.begin(), path.end());
+				}
+				return path;
+			}
+
+			for (int i = 0; i < 8; i++) {
+				pii nw;
+
+				nw.first = last.second.first + dx[i];
+				nw.second = last.second.second + dy[i];
+
+				if (nw.first >= 0 && nw.first < n && nw.second >= 0 && nw.second < m && fine(VecI(nw))) {
+					int myg = g[last.second] + 1;
+					if (!g.count(nw) || myg < g[nw]) {
+						from[nw] = last.second;
+						g[nw] = myg;
+						f[nw] = myg + abs(end.x - nw.first) + abs(end.y - nw.second);
+						q.push({ f[nw],nw });
+					}
+				}
+			}
+		}
+
+		return {};
+	}
+
 	void displayDamage(VecD pos, int amount) {
 
 		DamageLabel* lbl;
@@ -762,7 +778,7 @@ public:
 		lbl->realPosition = pos;
 		
 		//should be pooling but i am lazy
-		actions.add(aseq({ adelay(15),aalpha(lbl,15,0),new ActionRunnable([=]() {lbl->removeFromParent(); delete lbl; }) }));
+		actions.add(aseq({ adelay(15),aalpha(lbl,15,0),aremove(lbl) }));
 		projectileSpriteGroup->addChild(lbl);
 	}
 
