@@ -403,6 +403,8 @@ private:
 
 	void initDeployer() {
 		deployer.resize(lvl.deployPosition.size());
+		towerMarks.resize(lvl.deployPosition.size());
+
 		for (int i = 0; i < lvl.deployPosition.size(); i++) {
 			deployer[i] = new Sprite(am["signpost"]);
 			deployer[i]->pivot = { 0.5,1 };
@@ -452,6 +454,13 @@ private:
 						delete s.locator;
 						s.noProcess = true;
 					}
+				}
+
+				//remove tower mark
+				if (towerMarks[openingUi] != NULL) {
+					towerMarks[openingUi]->removeFromParent();
+					delete towerMarks[openingUi];
+					towerMarks[openingUi] = NULL;
 				}
 
 				int __opening = openingUi;
@@ -513,6 +522,24 @@ private:
 				playerGold -= ti->upgradeCost[ti->level - 1];
 				ti->level++;
 				ti->upgrade();
+
+				//setup tower marks
+				auto& pt = towerMarks[openingUi];
+				if (pt == NULL) {
+					pt = new Sprite(am["badge2"]);
+					pt->position = ti->position-VecI(40,0);
+					towerMarkSpriteGroup->addChild(pt);
+				}
+				else {
+					pt->texture = am["badge" + to_string(ti->level)];
+				}
+
+				for (int i = 0; i < 5; i++) {
+					auto particle = new ParticleSprite(am["badge" + to_string(ti->level)]);
+					particle->realPosition = i2d(ti->position);
+					towerMarkSpriteGroup->addChild(particle);
+					actions.add(aseq({ adelay(45),aalpha(particle,15,0),aremove(particle) }));
+				}
 
 				//close ui
 				upgradeUi->visible = false;
@@ -669,10 +696,12 @@ public:
 
 	map<int, Sprite*> enemySprites;
 	vector<Sprite*> towerSprites;
+	vector<Sprite*> towerMarks;
 
 	Actor* towerSpriteGroup;
 	Actor* enemySpriteGroup;
 	Actor* projectileSpriteGroup;
+	Actor* towerMarkSpriteGroup;
 
 	Sprite* tooltipWindow;
 	Label* tooltipText;
@@ -880,6 +909,9 @@ public:
 		towerSpriteGroup = new Actor();
 		bgGroup->addChild(towerSpriteGroup);
 
+
+		towerMarkSpriteGroup = new Actor();
+		bgGroup->addChild(towerMarkSpriteGroup);
 
 		//build tooltip
 		tooltipWindow = new Sprite(am["tooltip"]);

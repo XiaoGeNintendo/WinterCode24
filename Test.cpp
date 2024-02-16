@@ -108,6 +108,9 @@ void loadGame() {
 	for (int i = 1; i <= 4; i++) {
 		am.load("coin" + to_string(i), "img/coin" + to_string(i) + ".png");
 	}
+	for (int i = 2; i <= 4; i++) {
+		am.load("badge" + to_string(i), "img/badge" + to_string(i) + ".png");
+	}
 
 	am.loadEnemy("goblin", 2, 3);
 	am.loadEnemy("soldier", 2, 2);
