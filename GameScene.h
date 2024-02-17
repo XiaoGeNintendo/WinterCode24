@@ -931,6 +931,10 @@ public:
 	Sprite* waveBar2;
 	Actor* waveIndicator;
 
+	Sprite* previewBox;
+	Sprite* previewSprites[16];
+	Label* previewHint;
+
 	int playerHp = 20;
 	int playerGold = 0;
 
@@ -1148,6 +1152,20 @@ public:
 
 		//build enemy mark
 		initEnemyMark();
+
+		//build enemy preview
+		previewBox = new Sprite(am["dialog"]);
+		previewBox->position = VecI(400, 380);
+		previewBox->size = VecI(400, 200);
+		previewHint = new Label("global", 12, "Next Wave Enemies:", { 255,255,255,255 });
+		previewHint->position = { 40,20 };
+		previewBox->addChild(previewHint);
+		for (int i = 0; i < 16; i++) {
+			previewSprites[i] = new Sprite(am["goblin_w1"]);
+			previewSprites[i]->position = { 50 + i % 8 * 40,50 + i / 8 * 40 };
+			previewBox->addChild(previewSprites[i]);
+		}
+		fgGroup->addChild(previewBox);
 
 		//build tooltip
 		tooltipWindow = new Sprite(am["tooltip"]);
