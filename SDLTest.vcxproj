@@ -23,9 +23,11 @@
     <ClCompile Include="ActionManager.cpp" />
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="DifficultyScene.cpp" />
+    <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="GraphicsConstant.cpp" />
     <ClCompile Include="Label.cpp" />
     <ClCompile Include="LevelInfo.cpp" />
+    <ClCompile Include="MapScene.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Test.cpp" />

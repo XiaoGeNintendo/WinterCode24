@@ -105,6 +105,11 @@ private:
 						enemySprites[enemy.id] = NULL;
 
 						enemy.noProcess = true;
+
+						if (playerHp == 0) {
+							dialogBg->visible = true;
+							gameoverDialog->visible = true;
+						}
 						continue;
 						//TODO player hp 0
 					}
@@ -139,6 +144,158 @@ private:
 
 		}
 	}
+
+	void initDialog() {
+		//pause button first
+		pauseBtn = new Sprite(am["setting"]);
+		pauseBtn->position = { SCREEN_WIDTH/2,SCREEN_HEIGHT-30 };
+		pauseBtn->pivot = { 0.5,0.5 };
+		pauseBtn->setClick([=]() {dialogBg->visible = true; settingDialog->visible = true; });
+		fgGroup->addChild(pauseBtn);
+
+		dialogBg = new Sprite(am["globalmask"]);
+		dialogBg->zIndex = 10000;
+		dialogBg->visible = false;
+		dialogBg->setClick([=]() {
+			//to prevent mouse clicks below
+			});
+		fgGroup->addChild(dialogBg);
+
+
+		//win dialog
+		{
+			winDialog = new Sprite(am["dialog"]);
+			winDialog->size = { 500,500 };
+			winDialog->pivot = { 0.5,0.5 };
+			winDialog->visible = false;
+			winDialog->position = { SCREEN_WIDTH / 2,SCREEN_HEIGHT / 2 };
+			winDialog->zIndex = 10001;
+			fgGroup->addChild(winDialog);
+
+			auto b = new Label("global", 24, "You win!", { 0,255,0,255 });
+			b->position = { 0,-200 };
+			b->pivot = { 0.5,0.5 };
+			winDialog->addChild(b);
+
+			string rank="F";
+			
+			if (currentDifficulty == LUNATIC) {
+				rank = "SS!";
+			}
+			else if (currentDifficulty == HARD) {
+				if (playerHp >= 3) {
+					rank = "S";
+				}
+				else {
+					rank = "A";
+				}
+			}
+			else if (currentDifficulty == NORMAL) {
+				if (playerHp >= 10) {
+					rank = "A";
+				}
+				else if(playerHp>=5){
+					rank = "B";
+				}
+				else {
+					rank = "C";
+				}
+			}
+			else if (currentDifficulty == EASY) {
+				if (playerHp >= 20) {
+					rank = "A";
+				}
+				else if (playerHp >= 10) {
+					rank = "B";
+				}
+				else {
+					rank = "C";
+				}
+			}
+
+			auto c = new Label("global", 24, "Your rank is: "+rank, { 0,0,255,255 });
+			c->position = { 0,0 };
+			c->pivot = { 0.5,0.5 };
+			winDialog->addChild(c);
+
+			auto d = new LabelButton("global", 16, "Return to map", { 255,0,0,255 });
+			d->position = { 0,45 };
+			d->pivot = { 0.5,0.5 };
+			d->fClick = [=]() {
+				recoverState();
+			};
+			winDialog->addChild(d);
+		}
+
+
+		//dead dialog
+		{
+			gameoverDialog = new Sprite(am["dialog"]);
+			gameoverDialog->size = { 500,500 };
+			gameoverDialog->pivot = { 0.5,0.5 };
+			gameoverDialog->visible = false;
+			gameoverDialog->position = { SCREEN_WIDTH / 2,SCREEN_HEIGHT / 2 };
+			gameoverDialog->zIndex = 10001;
+			fgGroup->addChild(gameoverDialog);
+
+			auto b = new Label("global", 24, "You died!", { 255,0,0,255 });
+			b->position = { 0,-200 };
+			b->pivot = { 0.5,0.5 };
+			gameoverDialog->addChild(b);
+
+			auto c = new LabelButton("global", 16, "Retry", { 33,33,33,255 });
+			c->position = { 0, -30 };
+			c->pivot = { 0.5,0.5 };
+			c->fClick = [=]() {
+				recoverState2();
+			};
+			gameoverDialog->addChild(c);
+
+			auto d = new LabelButton("global", 16, "Give up", { 255,0,0,255 });
+			d->position = { 0,30 };
+			d->pivot = { 0.5,0.5 };
+			d->fClick = [=]() {
+				recoverState();
+			};
+			gameoverDialog->addChild(d);
+		}
+
+		//setting dialog
+		{
+			settingDialog = new Sprite(am["dialog"]);
+			settingDialog->size = { 500,500 };
+			settingDialog->pivot = { 0.5,0.5 };
+			settingDialog->visible = false;
+			settingDialog->position = { SCREEN_WIDTH / 2,SCREEN_HEIGHT / 2 };
+			settingDialog->zIndex = 10001;
+			fgGroup->addChild(settingDialog);
+
+			auto b = new Label("global", 24, "Pause", { 255,255,255,255 });
+			b->position = { 0,-200 };
+			b->pivot = { 0.5,0.5 };
+			settingDialog->addChild(b);
+
+			auto c = new LabelButton("global", 16, "Return", { 33,33,33,255 });
+			c->position = { 0, -30 };
+			c->pivot = { 0.5,0.5 };
+			c->fClick = [=]() {
+				dialogBg->visible = false;
+				settingDialog->visible = false;
+			};
+			settingDialog->addChild(c);
+
+			auto d = new LabelButton("global", 16, "Give up", { 255,0,0,255 });
+			d->position = { 0,30 };
+			d->pivot = { 0.5,0.5 };
+			d->fClick = [=]() {
+				recoverState();
+			};
+			settingDialog->addChild(d);
+		}
+	}
+
+	void recoverState();
+	void recoverState2();
 
 	void tickSoldier() {
 		//ticking soldiers
@@ -225,7 +382,6 @@ private:
 			else if (soldier.state == SOLDIER_FIGHTING) {
 				soldier.attackTimer--;
 				if (soldier.attackTimer < 0) {
-					//TODO damage enemy effect
 					soldier.attackTimer = 60;
 					auto& atk = enemyInstances[soldier.fighting];
 					atk.hp -= soldier.atk - atk.data->defense;
@@ -296,6 +452,12 @@ private:
 					previewSprites[i]->visible = false;
 				}
 			}
+			else {
+				previewSprites[0]->texture = am["null"];
+				for (int i = 1; i < 16; i++) {
+					previewSprites[i]->visible = false;
+				}
+			}
 
 			//wave label
 			actions.add(aseq({
@@ -343,6 +505,22 @@ private:
 						apara({amove(waveLabel,30,VecI(50,0),VecI(0,0)),aalpha(waveLabel,30,0,255)})
 					}));
 				}
+			}
+		}
+		
+		//check for win condition
+		if (currentWave == lvl.waves.size()-1 && nextEnemy == lvl.waves[currentWave].enemies.size()) {
+			bool ok = true;
+			for (auto x : enemyInstances) {
+				if (!x.noProcess) {
+					ok = false;
+					break;
+				}
+			}
+
+			if (ok) {
+				dialogBg->visible = true;
+				winDialog->visible = true;
 			}
 		}
 	}
@@ -889,7 +1067,6 @@ private:
 				}, [=]() {tooltipWindow->visible = false; previewBox->visible = false; });
 
 			x->setClick([=]() {
-				
 				if (currentWave==-1 || currentWave!=lvl.waves.size() && nextEnemy==lvl.waves[currentWave].enemies.size() && currentWave != lvl.waves.size() - 1) {
 					nextWaveCountdown = 0;
 				}
@@ -957,6 +1134,12 @@ public:
 	Sprite* previewBox;
 	Sprite* previewSprites[16];
 	Label* previewHint;
+
+	Sprite* dialogBg;
+	Sprite* settingDialog;
+	Sprite* winDialog;
+	Sprite* gameoverDialog;
+	Sprite* pauseBtn;
 
 	int playerHp = 20;
 	int playerGold = 0;
@@ -1156,6 +1339,8 @@ public:
 		//upgrade menu
 		initUpgradeMenu();
 
+		//set dialog
+		initDialog();
 
 		//add sprite group
 		enemySpriteGroup = new Actor();
@@ -1262,7 +1447,6 @@ public:
 
 				//COPIED FROM TOWERS. CHANGE BOTH REFERENCE!!
 				for (int i = 0; i < 3; i++) {
-					//TODO Farmer
 					auto newSoldier = new Sprite(am.animation("farmer_w", 1, 2), 1e9);
 
 					auto targetPos = skillPos + VecI(randInt(-20, 20), randInt(10, 20));
@@ -1298,6 +1482,11 @@ public:
 	}
 
 	void tick() override {
+
+		if (dialogBg->visible) {
+			return;
+		}
+
 		tickWave();
 
 		tickEnemy();
@@ -1311,6 +1500,7 @@ public:
 				x->tick();
 			}
 		}
+		
 
 		//setup health
 		heartDisplay->text = to_string(playerHp);

@@ -18,7 +18,7 @@ private:
 	Sprite* preview;
 
 	Sprite* fightBtn;
-	LabelButton* backBtn;
+	Sprite* backBtn;
 
 	LabelButton* diffBtn[4];
 

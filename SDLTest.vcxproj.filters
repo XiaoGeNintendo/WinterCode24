@@ -63,6 +63,12 @@
     <ClCompile Include="Random.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="MapScene.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScene.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Texture.h">

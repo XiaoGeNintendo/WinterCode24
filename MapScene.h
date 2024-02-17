@@ -15,13 +15,16 @@ private:
 
 	Label* titleLabel;
 
-	LabelButton* backBtn;
+	Sprite* backBtn;
 
 	Sprite* levelButton[LEVEL_COUNT];
 
 	VecI levelPos[LEVEL_COUNT] = { VecI(249,481),VecI(382,343),VecI(658,213) };
 
 public:
+
+	void recoverState();
+
 	void init() override {
 		bgGroup = new Actor();
 
@@ -42,17 +45,14 @@ public:
 
 		//back button does not work anymore
 
-		
-		backBtn = new LabelButton("global", 20, "Back", { 111,111,111,255 });
-		backBtn->visible = false;
-		backBtn->pivot = { 0.5,0.5 };
+		//back button
+		backBtn = new Sprite(am["back"]);
+		backBtn->pivot = { 0,1 };
 		backBtn->position = { 50,SCREEN_HEIGHT / 7 * 6 };
-		backBtn->color.a = 0;
-		backBtn->fClick = [&]() {
-			scenes.back();
-		};
+		backBtn->setClick([&]() {
+			recoverState();
+		});
 		fgGroup->addChild(backBtn);
-		
 
 		//add level button
 		auto imgs = am.animation("flag",1,4);

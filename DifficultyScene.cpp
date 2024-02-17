@@ -43,15 +43,14 @@ void DifficultyScene::init() {
 		diffBtn[i]->position = { 60,30 + 20 * i };
 		diffBtn[i]->fClick = [=]() {
 			currentDifficulty = i;
-			diffMarker->position = { 40,30 + 20 * i };
+			diffMarker->position = { 40,35 + 20 * i };
 		};
 		bg->addChild(diffBtn[i]);
 	}
 
 	//add marker
 	diffMarker = new Sprite(am["difficultyMarker"]);
-	diffMarker->position = { 40,30 };
-	diffMarker->pivot = { 0.5,0.5 };
+	diffMarker->position = { 40,35 };
 	bg->addChild(diffMarker);
 
 	//start button
@@ -64,12 +63,12 @@ void DifficultyScene::init() {
 	bg->addChild(fightBtn);
 
 	//back button
-	backBtn = new LabelButton("global", 20, "Back", { 111,111,111,255 });
+	backBtn = new Sprite(am["back"]);
 	backBtn->pivot = { 0,1 };
-	backBtn->position = { 150,220 };
-	backBtn->fClick = [&]() {
+	backBtn->position = { 105,220 };
+	backBtn->setClick([&]() {
 		scenes.back();
-	};
+		});
 	bg->addChild(backBtn);
 
 	//add animation
