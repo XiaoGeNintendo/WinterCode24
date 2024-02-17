@@ -100,3 +100,9 @@ void Actor::centerAt(VecI center)
 void Actor::click() {
 	//do nothing
 }
+
+Actor::~Actor() {
+	for (auto x : children) {
+		delete x;
+	}
+}

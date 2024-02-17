@@ -144,13 +144,18 @@ private:
 			auto& soldier = soldiers[i];
 
 			auto sp = soldier.locator;
-			//high priority job!
-			if (sp != NULL && sp->children.size() != 0) {
-				assert(sp->children[0]->children.size() != 0);
-				sp->children[0]->children[0]->size.x = max(1.0 * 20 * soldier.hp / soldier.maxhp, 0.0);
-			}
 			if (soldier.noProcess) {
 				continue;
+			}
+
+			//high priority job!
+			if (sp != NULL && sp->children.size() != 0) {
+				if (sp->children[0]->children.size() != 0) {
+					sp->children[0]->children[0]->size.x = max(1.0 * 20 * soldier.hp / soldier.maxhp, 0.0);
+				}
+				else {
+					printf("WARNING: ticking glitched soldier hp bar on %d which has hp %d\n", i, soldier.hp);
+				}
 			}
 
 			//test for dead first
@@ -265,9 +270,9 @@ private:
 	void tickWave() {
 
 		nextWaveCountdown--;
-		waveBar2->size.x = WAVE_BAR_LENGTH * nextWaveCountdown / (currentWave == lvl.waves.size() ? 1e9 : lvl.waves[currentWave + 1].length);
+		waveBar2->size.x = WAVE_BAR_LENGTH * nextWaveCountdown / (currentWave == lvl.waves.size()-1 ? 1e9 : lvl.waves[currentWave + 1].length);
 
-		if (nextWaveCountdown == 0) {
+		if (nextWaveCountdown <= 0) {
 			currentWave++;
 			printf("Started wave %d\n", currentWave);
 
@@ -278,11 +283,11 @@ private:
 				}));
 
 			nextEnemy = 0;
-			nextWaveCountdown = currentWave == lvl.waves.size() ? 1e9 : lvl.waves[currentWave + 1].length;
+			nextWaveCountdown = currentWave == lvl.waves.size()-1 ? 1e9 : lvl.waves[currentWave + 1].length;
 			nextEnemyCountdown = lvl.waves[currentWave].delay;
 		}
 		nextEnemyCountdown--;
-		if (nextEnemyCountdown == 0) {
+		if (nextEnemyCountdown <= 0) {
 			if (currentWave != lvl.waves.size() && nextEnemy != lvl.waves[currentWave].enemies.size()) {
 				printf("Generating %s\n", lvl.waves[currentWave].enemies[nextEnemy].c_str());
 				//generate enemy
@@ -849,6 +854,26 @@ private:
 		reinforceSkill->children[0]->size.y = 60 * reinforceTime / REINFORCE_TIME;
 	}
 
+	void initEnemyMark() {
+		for (int i = 0; i < lvl.enemyMarks.size(); i++) {
+			VecI pos = lvl.enemyMarks[i];
+			auto x = new Sprite(am["enemymark"]);
+			x->position = pos;
+			x->setHover([=]() {
+				tooltipText->text = "Next wave";
+				tooltipText->markDirty();
+				tooltipWindow->visible = true;
+				}, [=]() {tooltipWindow->visible = false; });
+
+			x->setClick([=]() {
+				
+				if (currentWave==-1 || currentWave!=lvl.waves.size() && nextEnemy==lvl.waves[currentWave].enemies.size() && currentWave != lvl.waves.size() - 1) {
+					nextWaveCountdown = 0;
+				}
+			});
+			enemyMarkSpriteGroup->addChild(x);
+		}
+	}
 public:
 	Sprite* bgImg;
 	LevelInfo lvl;
@@ -882,6 +907,7 @@ public:
 	Actor* enemySpriteGroup;
 	Actor* projectileSpriteGroup;
 	Actor* towerMarkSpriteGroup;
+	Actor* enemyMarkSpriteGroup;
 
 	Sprite* tooltipWindow;
 	Label* tooltipText;
@@ -1114,16 +1140,21 @@ public:
 		towerSpriteGroup = new Actor();
 		bgGroup->addChild(towerSpriteGroup);
 
-
 		towerMarkSpriteGroup = new Actor();
 		bgGroup->addChild(towerMarkSpriteGroup);
+
+		enemyMarkSpriteGroup = new Actor();
+		bgGroup->addChild(enemyMarkSpriteGroup);
+
+		//build enemy mark
+		initEnemyMark();
 
 		//build tooltip
 		tooltipWindow = new Sprite(am["tooltip"]);
 		tooltipWindow->zIndex = 10;
 		tooltipWindow->size.x *= 2;
 		tooltipText = new Label("global", 12, "ww", { 255,255,255,255 });
-		tooltipText->position = { 8,8 };
+		tooltipText->position = { 10,8 };
 		tooltipWindow->addChild(tooltipText);
 		tooltipWindow->visible = false;
 		fgGroup->addChild(tooltipWindow);

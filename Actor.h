@@ -38,7 +38,7 @@ public:
 
 	virtual void destroy();
 
-	virtual ~Actor() = default;
+	virtual ~Actor();
 
 	VecI getGlobalPosition();
 	VecI getRenderPosition();

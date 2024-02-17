@@ -42,10 +42,13 @@ void loadLevelInfos() {
 	levels[0].desc = { "Enemies are attacking the kingdom in all directions!","Use hero and towers to protect yourself!","Time to get familiar with the towers!!" };
 	levels[0].background = "level0";
 	levels[0].deployPosition = { {272,363},{164,417},{73,570},{84,664},{104,778},{149,867},{1296,657},{1128,651},{964,658},{821,656},{694,653},{515,617},{621,485},{679,338}, };
-	levels[0].waves.resize(13);
-	levels[0].waves[0].length = 180;
-	levels[0].waves[0].enemies = repeat(string("gb"),10);
-	levels[0].waves[0].delay = 20;
+	levels[0].waves.resize(3);
+	for (int i = 0; i < 3; i++) {
+		levels[0].waves[i].length = 60*30;
+		levels[0].waves[i].enemies = repeat(string("gb"), (i+1)*5);
+		levels[0].waves[i].delay = 60-20*i;
+	}
+
 	levels[0].enemyMarks = { {515,42} };
 	levels[0].path[0] = {{429,12},{419,351},{331,441},{254,490},{172,576},{166,720},{207,812},{314,868},{467,885},{1435,895}, };
 	levels[0].path[1] = {{514,13},{513,370},{290,572},{281,719},{533,811},{1383,807}, };

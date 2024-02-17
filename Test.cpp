@@ -105,6 +105,7 @@ void loadGame() {
 	am.load("reinforce", "img/reinforce.png");
 	am.load("mask", "img/mask.png");
 	am.load("globalmask", "img/globalmask.png");
+	am.load("enemymark", "img/enemymark.png");
 
 	for (int i = 1; i <= 4; i++) {
 		am.load("flag" + to_string(i), "img/flag" + to_string(i) + ".png");
