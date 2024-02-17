@@ -13,6 +13,8 @@
 #include "Random.h"
 #include "ParticleSprite.h"
 #include "DamageLabel.h"
+#include <set>
+#include <string>
 using namespace std;
 
 #define pii pair<int,int>
@@ -276,6 +278,26 @@ private:
 			currentWave++;
 			printf("Started wave %d\n", currentWave);
 
+			//setup preview
+			if (currentWave != lvl.waves.size()-1) {
+				set<string> st;
+				for (auto x : lvl.waves[currentWave + 1].enemies) {
+					st.insert(x);
+				}
+
+				int now = 0;
+				for (auto x : st) {
+					previewSprites[now]->visible = true;
+					previewSprites[now]->texture = am[lvl.enemies[x].id + "_w1"];
+					now++;
+				}
+
+				for (int i = now; i < 16; i++) {
+					previewSprites[i]->visible = false;
+				}
+			}
+
+			//wave label
 			actions.add(aseq({
 				apara({amove(waveLabel,30,VecI(0,0),VecI(-50,0)),aalpha(waveLabel,30,0)}),
 				new ActionRunnable([=]() {waveLabel->text = "Attack | Wave " + to_string(currentWave+1) + "/" + to_string(lvl.waves.size()); waveLabel->markDirty(); waveLabel->position = VecI(50,0); }),
@@ -863,7 +885,8 @@ private:
 				tooltipText->text = "Next wave";
 				tooltipText->markDirty();
 				tooltipWindow->visible = true;
-				}, [=]() {tooltipWindow->visible = false; });
+				previewBox->visible = true;
+				}, [=]() {tooltipWindow->visible = false; previewBox->visible = false; });
 
 			x->setClick([=]() {
 				
@@ -1155,16 +1178,35 @@ public:
 
 		//build enemy preview
 		previewBox = new Sprite(am["dialog"]);
-		previewBox->position = VecI(400, 380);
-		previewBox->size = VecI(400, 200);
+		previewBox->position = VecI(480, 280);
+		previewBox->size = VecI(300, 300);
 		previewHint = new Label("global", 12, "Next Wave Enemies:", { 255,255,255,255 });
 		previewHint->position = { 40,20 };
 		previewBox->addChild(previewHint);
 		for (int i = 0; i < 16; i++) {
 			previewSprites[i] = new Sprite(am["goblin_w1"]);
-			previewSprites[i]->position = { 50 + i % 8 * 40,50 + i / 8 * 40 };
+			previewSprites[i]->position = { 50 + i % 6 * 40,50 + i / 6 * 40 };
 			previewBox->addChild(previewSprites[i]);
 		}
+
+		//initial preview box
+		set<string> st;
+		for (auto x : lvl.waves[0].enemies) {
+			st.insert(x);
+		}
+
+		int now = 0;
+		for (auto x : st) {
+			previewSprites[now]->visible = true;
+			previewSprites[now]->texture = am[lvl.enemies[x].id + "_w1"];
+			now++;
+		}
+
+		for (int i = now; i < 16; i++) {
+			previewSprites[i]->visible = false;
+		}
+
+		previewBox->visible = false;
 		fgGroup->addChild(previewBox);
 
 		//build tooltip
