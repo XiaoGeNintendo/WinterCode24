@@ -124,6 +124,7 @@ void loadGame() {
 	}
 
 	am.loadEnemy("goblin", 2, 3);
+	am.loadEnemy("wolf", 2, 2, true);
 	am.loadEnemy("soldier", 2, 2);
 	am.loadEnemy("farmer", 2, 2);
 

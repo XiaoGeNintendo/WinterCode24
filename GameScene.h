@@ -456,7 +456,9 @@ private:
 				int now = 0;
 				for (auto x : st) {
 					previewSprites[now]->visible = true;
-					previewSprites[now]->texture = am[lvl.enemies[x].id + "_w1"];
+
+					previewSprites[now]->texture = am[lvl.enemies[x].id + (lvl.enemies[x].thumbnail ? "_t" : "_w1")];
+					
 					now++;
 				}
 

@@ -28,4 +28,27 @@ vector<string> repeat(string x, int times)
 	return a;
 }
 
+vector<string> repeatv(vector<string> x, int times)
+{
+	vector<string> a;
+	for (int i = 0; i < times; i++) {
+		for (auto c : x) {
+			a.push_back(c);
+		}
+	}
+	return a;
+}
+
+vector<string> operator+(vector<string> a, vector<string> b)
+{
+	vector<string> c;
+	for (auto x : a) {
+		c.push_back(x);
+	}
+	for (auto x : b) {
+		c.push_back(x);
+	}
+	return c;
+}
+
 

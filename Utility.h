@@ -23,3 +23,5 @@ bool inRect(VecI xy, VecI wh, VecD test);
 VecI getMousePosition();
 
 vector<string> repeat(string x, int times);
+vector<string> repeatv(vector<string> x, int times);
+vector<string> operator+(vector<string> a, vector<string> b);

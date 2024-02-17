@@ -14,22 +14,35 @@ extern int currentLevel;
 extern int currentDifficulty;
 
 struct EnemyData {
-	string id;
-	string name;
-	string img;
-	double speed;
-	int attack;
-	int defense;
-	int attackDelay;
-	int dropCoin;
-	int pathId;
-	int maxhp;
+	string id="";
+	string name="";
+	double speed=0;
+	int attack=0;
+	int defense=0;
+	int attackDelay=0;
+	int dropCoin=0;
+	int pathId=0;
+	int maxhp=0;
 	//Will randomize a path between pathId, pathId+1 and pathId+2
-	bool randomPath;
+	bool randomPath=false;
 	//walking animation count
-	int wac;
+	int wac=2;
 	//attacking animation count
-	int aac;
+	int aac=2;
+	bool thumbnail=false;
+
+	EnemyData() {}
+
+	EnemyData(string _id, string _name, 
+		double _speed, int _attack, int _defense, int _attackDelay,
+		int _dropCoin, int _pathId, int _maxhp, bool _randomPath,
+		int _wac, int _aac, bool _thumbnail)
+		: id(_id), name(_name), speed(_speed), attack(_attack),
+		defense(_defense), attackDelay(_attackDelay), dropCoin(_dropCoin),
+		pathId(_pathId), maxhp(_maxhp), randomPath(_randomPath),
+		wac(_wac), aac(_aac), thumbnail(_thumbnail) {
+	}
+
 };
 
 struct WaveData {
