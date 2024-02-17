@@ -2,6 +2,7 @@
 #include "Towers.h"
 #include "Utility.h"
 #include <string>
+#include <cassert>
 using namespace std;
 
 int currentLevel = 0;
@@ -11,6 +12,38 @@ LevelInfo levels[LEVEL_COUNT];
 //sample towers
 Tower* towers[TOWER_COUNT];
 function<Tower* ()> towersCreateFunction[TOWER_COUNT];
+
+string difficultyString(int a) {
+	switch (a) {
+	case 0:
+		return "Easy";
+	case 1:
+		return "Normal";
+	case 2:
+		return "Hard";
+	case 3:
+		return "Lunatic";
+	default:
+		assert(false);
+	}
+}
+
+int difficultySelect(int e, int n, int h, int l)
+{
+	switch (currentDifficulty) {
+	case 0:
+		return e;
+	case 1:
+		return n;
+	case 2:
+		return h;
+	case 3:
+		return l;
+	default:
+		assert(false);
+	}
+}
+
 
 void loadLevelInfos() {
 

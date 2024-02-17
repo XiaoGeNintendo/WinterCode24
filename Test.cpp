@@ -147,8 +147,8 @@ void loadGame() {
 	//load game content
 	loadLevelInfos();
 
-	//scenes.add(new TitleScene());
-	scenes.add(new GameScene()); //test only
+	scenes.add(new TitleScene());
+	//scenes.add(new GameScene()); //test only
 
 
 	printf("Game Loaded!\n");

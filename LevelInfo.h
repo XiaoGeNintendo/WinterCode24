@@ -58,3 +58,6 @@ extern Tower* towers[TOWER_COUNT];
 extern function<Tower* ()> towersCreateFunction[TOWER_COUNT];
 
 void loadLevelInfos();
+
+string difficultyString(int a);
+int difficultySelect(int e, int n, int h, int l);

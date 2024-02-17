@@ -24,6 +24,13 @@ class GameScene : public Scene {
 private:
 
 
+	int getFireballCD() {
+		return FIREBALL_TIME * difficultySelect(1, 2, 3, 3);
+	}
+	int getReinforceCD() {
+		return REINFORCE_TIME * difficultySelect(1, 2, 3, 3);
+	}
+
 	void tickEnemy() {
 
 		//ticking enemies
@@ -123,8 +130,8 @@ private:
 				if (enemy.attackTimer < 0) {
 					enemy.attackTimer = enemy.data->attackDelay;
 					auto& atk = soldiers[enemy.fighting[0]];
-					atk.hp -= enemy.data->attack;
-					displayDamage(atk.locator->position, enemy.data->attack);
+					atk.hp -= enemy.data->attack * difficultySelect(1,1,2,2);
+					displayDamage(atk.locator->position, enemy.data->attack * difficultySelect(1, 1, 2, 2));
 				}
 			}
 
@@ -218,7 +225,7 @@ private:
 			c->pivot = { 0.5,0.5 };
 			winDialog->addChild(c);
 
-			auto d = new LabelButton("global", 16, "Return to map", { 255,0,0,255 });
+			auto d = new LabelButton("global", 16, "Return to map", { 255,236,139,255 });
 			d->position = { 0,45 };
 			d->pivot = { 0.5,0.5 };
 			d->fClick = [=]() {
@@ -275,7 +282,7 @@ private:
 			b->pivot = { 0.5,0.5 };
 			settingDialog->addChild(b);
 
-			auto c = new LabelButton("global", 16, "Return", { 33,33,33,255 });
+			auto c = new LabelButton("global", 16, "Return", { 88,88,88,255 });
 			c->position = { 0, -30 };
 			c->pivot = { 0.5,0.5 };
 			c->fClick = [=]() {
@@ -291,6 +298,11 @@ private:
 				recoverState();
 			};
 			settingDialog->addChild(d);
+
+			auto e = new Label("global", 12, "Level "+to_string(currentLevel+1)+" "+difficultyString(currentDifficulty), {200,200,200,255});
+			e->position = { 0,200 };
+			e->pivot = { 0.5,0.5 };
+			settingDialog->addChild(e);
 		}
 	}
 
@@ -477,7 +489,7 @@ private:
 				//generate enemy
 				auto instance = EnemyInstance();
 				instance.data = &lvl.enemies[lvl.waves[currentWave].enemies[nextEnemy]];
-				instance.maxhp = instance.hp = instance.data->maxhp;
+				instance.maxhp = instance.hp = instance.data->maxhp * difficultySelect(1, 1, 2, 2);
 				instance.path = lvl.path[instance.data->randomPath ? instance.data->pathId + randInt(0,2) : instance.data->pathId];
 				instance.position = i2d(instance.path[0]);
 				instance.nextPoint = 1;
@@ -1019,7 +1031,7 @@ private:
 					amove(arrow,30,d2i(enemy.position + (enemy.state == ENEMY_WALKING ? enemy.speed * 30 : VecD(0,0)))),
 					new ActionRunnable([=]() {
 						if (!e->noProcess) {
-							int dmg = 50;
+							int dmg = difficultySelect(50, 30, 20, 10);
 							e->hp -= dmg; //remove enemy hp
 							displayDamage(e->position, dmg);
 						}
@@ -1050,8 +1062,8 @@ private:
 				projectileSpriteGroup->addChild(arrow);
 			}
 		}
-		fireballSkill->children[0]->size.y = 60 * fireballTime / FIREBALL_TIME;
-		reinforceSkill->children[0]->size.y = 60 * reinforceTime / REINFORCE_TIME;
+		fireballSkill->children[0]->size.y = 60 * fireballTime / getFireballCD();
+		reinforceSkill->children[0]->size.y = 60 * reinforceTime / getReinforceCD();
 	}
 
 	void initEnemyMark() {
@@ -1263,22 +1275,9 @@ public:
 		towerSprites.resize(lvl.deployPosition.size());
 
 		//setup basic stuff
-		if (currentDifficulty == EASY) {
-			playerHp = 20;
-			playerGold = 500;
-		}
-		else if (currentDifficulty == NORMAL) {
-			playerHp = 10;
-			playerGold = 500;
-		}
-		else if (currentDifficulty == HARD) {
-			playerHp = 3;
-			playerGold = 350;
-		}
-		else if (currentDifficulty == LUNATIC) {
-			playerHp = 1;
-			playerGold = 300;
-		}
+		playerHp = difficultySelect(20, 10, 3, 1);
+		playerGold = difficultySelect(500, 400, 300, 200);
+
 		nextWaveCountdown = lvl.waves[0].length;
 		nextEnemyCountdown = 1e9;
 		currentWave = -1;
@@ -1434,7 +1433,7 @@ public:
 				//fireball
 				skillLeft = 60;
 				skillPos = getMousePosition() - bgGroup->position;
-				fireballTime = FIREBALL_TIME;
+				fireballTime = getFireballCD();
 			}
 			else if (selectedSkill == 2) {
 				//reinforce
@@ -1471,7 +1470,7 @@ public:
 					actions.add(aseq({ apara({ aalpha(newSoldier,30,255),amove(newSoldier,30,targetPos) }) }));
 				}
 
-				reinforceTime = REINFORCE_TIME;
+				reinforceTime = getReinforceCD();
 			}
 
 			tooltipWindow->visible = false;
