@@ -74,10 +74,18 @@ private:
 				enemy.state = ENEMY_WALKING;
 			}
 
+			//checking effects
+			if (enemy.slowdownTimer > 0) {
+				enemy.slowdownTimer--;
+			}
+
 			//behaviour
 			if (enemy.state == ENEMY_WALKING) {
 				//calculate speed
 				enemy.speed = i2d(enemy.path[enemy.nextPoint] - enemy.path[enemy.nextPoint - 1]).normalize() * enemy.data->speed;
+				if (enemy.slowdownTimer > 0) {
+					enemy.speed = enemy.speed / 2;
+				}
 				enemy.position = enemy.position + enemy.speed;
 
 				//check if in bound
@@ -226,15 +234,17 @@ private:
 			}
 
 			//update sprite
+			string prefix = soldier.from == -1 ? "farmer" : "soldier";
+
 			if (soldier.state == SOLDIER_IDLE) {
-				soldier.locator->setAnimation(am.animation("soldier_w", 1, 2), 1e9);
+				soldier.locator->setAnimation(am.animation(prefix+"_w", 1, 2), 1e9);
 			}
 			else if (soldier.state == SOLDIER_MOVING || soldier.state==SOLDIER_RETREATING) {
 				soldier.locator->flipX = (soldier.steps.size() > 0 && soldier.steps.back().x > soldier.locator->position.x);
-				soldier.locator->setAnimation(am.animation("soldier_w", 1, 2), 20);
+				soldier.locator->setAnimation(am.animation(prefix + "_w", 1, 2), 20);
 			}
 			else if (soldier.state == SOLDIER_FIGHTING) {
-				soldier.locator->setAnimation(am.animation("soldier_a", 1, 2), 20);
+				soldier.locator->setAnimation(am.animation(prefix + "_a", 1, 2), 20);
 				soldier.locator->flipX = true;
 			}
 		}
@@ -1121,7 +1131,7 @@ public:
 				//COPIED FROM TOWERS. CHANGE BOTH REFERENCE!!
 				for (int i = 0; i < 3; i++) {
 					//TODO Farmer
-					auto newSoldier = new Sprite(am.animation("soldier_w", 1, 2), 1e9);
+					auto newSoldier = new Sprite(am.animation("farmer_w", 1, 2), 1e9);
 
 					auto targetPos = skillPos + VecI(randInt(-20, 20), randInt(10, 20));
 					newSoldier->position = targetPos - VecI(0, 50);
@@ -1132,7 +1142,7 @@ public:
 
 					auto soldier = Soldier();
 					soldier.locator = newSoldier;
-					soldier.maxhp = soldier.hp = SOLDIER_HP;
+					soldier.maxhp = soldier.hp = SOLDIER_HP/2;
 					soldier.state = SOLDIER_IDLE;
 					soldier.assemblyPoint = skillPos;
 					soldier.atk = 50;

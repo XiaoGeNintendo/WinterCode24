@@ -27,7 +27,7 @@ void loadLevelInfos() {
 	auto goblin = EnemyData();
 	goblin.aac = 3;
 	goblin.wac = 2;
-	goblin.attack = 1;
+	goblin.attack = 10;
 	goblin.defense = 0;
 	goblin.dropCoin = 30;
 	goblin.attackDelay = 60;

@@ -244,6 +244,7 @@ void MageTower::tick()
 			}
 
 			enemy.hp -= 1;
+			enemy.slowdownTimer += 2;
 			sc->displayDamage(enemy.position, 1);
 		}
 		lastTick = 6 - level;
