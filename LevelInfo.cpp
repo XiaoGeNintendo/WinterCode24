@@ -43,10 +43,10 @@ void loadLevelInfos() {
 	levels[0].background = "level0";
 	levels[0].deployPosition = { {272,363},{164,417},{73,570},{84,664},{104,778},{149,867},{1296,657},{1128,651},{964,658},{821,656},{694,653},{515,617},{621,485},{679,338}, };
 	levels[0].waves.resize(13);
-	levels[0].waves[0].length = 60;
-	levels[0].waves[0].enemies = repeat(string("gb"),100);
+	levels[0].waves[0].length = 180;
+	levels[0].waves[0].enemies = repeat(string("gb"),10);
 	levels[0].waves[0].delay = 20;
-
+	levels[0].enemyMarks = { {515,42} };
 	levels[0].path[0] = {{429,12},{419,351},{331,441},{254,490},{172,576},{166,720},{207,812},{314,868},{467,885},{1435,895}, };
 	levels[0].path[1] = {{514,13},{513,370},{290,572},{281,719},{533,811},{1383,807}, };
 	levels[0].path[2] = { {601,14},{594,400},{403,547},{399,689},{511,762},{1435,742}, };

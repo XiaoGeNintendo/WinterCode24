@@ -45,6 +45,8 @@ struct LevelInfo {
 	string background;
 
 	vector<VecI> deployPosition;
+	vector<VecI> enemyMarks;
+
 	vector<VecI> path[16];
 	map<string, EnemyData> enemies;
 	vector<WaveData> waves;

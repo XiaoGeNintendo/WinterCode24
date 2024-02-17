@@ -265,9 +265,18 @@ private:
 	void tickWave() {
 
 		nextWaveCountdown--;
+		waveBar2->size.x = WAVE_BAR_LENGTH * nextWaveCountdown / (currentWave == lvl.waves.size() ? 1e9 : lvl.waves[currentWave + 1].length);
+
 		if (nextWaveCountdown == 0) {
 			currentWave++;
 			printf("Started wave %d\n", currentWave);
+
+			actions.add(aseq({
+				apara({amove(waveLabel,30,VecI(0,0),VecI(-50,0)),aalpha(waveLabel,30,0)}),
+				new ActionRunnable([=]() {waveLabel->text = "Attack | Wave " + to_string(currentWave+1) + "/" + to_string(lvl.waves.size()); waveLabel->markDirty(); waveLabel->position = VecI(50,0); }),
+				apara({amove(waveLabel,30,VecI(50,0),VecI(0,0)),aalpha(waveLabel,30,0,255)})
+				}));
+
 			nextEnemy = 0;
 			nextWaveCountdown = currentWave == lvl.waves.size() ? 1e9 : lvl.waves[currentWave + 1].length;
 			nextEnemyCountdown = lvl.waves[currentWave].delay;
@@ -299,6 +308,14 @@ private:
 
 				nextEnemy++;
 				nextEnemyCountdown = lvl.waves[currentWave].delay;
+
+				if (nextEnemy == lvl.waves[currentWave].enemies.size()) {
+					actions.add(aseq({
+						apara({amove(waveLabel,30,VecI(0,0),VecI(-50,0)),aalpha(waveLabel,30,0)}),
+						new ActionRunnable([=]() {waveLabel->text = "Interlude | Wave " + to_string(currentWave + 1) + "/" + to_string(lvl.waves.size()); waveLabel->markDirty(); waveLabel->position = VecI(50,0); }),
+						apara({amove(waveLabel,30,VecI(50,0),VecI(0,0)),aalpha(waveLabel,30,0,255)})
+					}));
+				}
 			}
 		}
 	}
@@ -882,6 +899,12 @@ public:
 	VecI skillPos;
 	Sprite* globalMask;
 
+	//wave indicator
+	Label* waveLabel;
+	Sprite* waveBar1;
+	Sprite* waveBar2;
+	Actor* waveIndicator;
+
 	int playerHp = 20;
 	int playerGold = 0;
 
@@ -890,6 +913,7 @@ public:
 	int nextEnemyCountdown,nextWaveCountdown;
 	int globalEnemyId = 0;
 
+	const int WAVE_BAR_LENGTH = 400;
 
 	Actor* generateHpBar() {
 		auto bar1 = new Sprite(am["hpbar1"]);
@@ -1107,6 +1131,23 @@ public:
 		//building skills
 		initSkill();
 
+		//init wave indicator
+		waveIndicator = new Actor();
+		waveIndicator->position = VecI(350, 30);
+		fgGroup->addChild(waveIndicator);
+
+		waveLabel = new Label("global", 16, "Interlude | Wave 1/" + to_string(lvl.waves.size()), {0,0,0,255});
+		waveIndicator->addChild(waveLabel);
+
+		waveBar1 = new Sprite(am["hpbar1"]);
+		waveBar1->position = VecI(0,20);
+		waveBar1->size.x = WAVE_BAR_LENGTH;
+		waveIndicator->addChild(waveBar1);
+
+		waveBar2 = new Sprite(am["hpbar2"]);
+		waveBar2->position = VecI(0, 20);
+		waveBar2->size.x = WAVE_BAR_LENGTH;
+		waveIndicator->addChild(waveBar2);
 
 		//must put last. global mask
 		globalMask = new Sprite(am["globalmask"]);
