@@ -7,6 +7,13 @@
 #include <SDL_ttf.h>
 
 #define PI 3.141592653589
+#define ASSEMBLY_RANGE 150
+#define SOLDIER_HP 100
+#define BOMB_RADIUS 85
+#define SOLDIER_WANDER_RANGE 50
+#define FIREBALL_TIME 600
+#define REINFORCE_TIME 600
+#define FIREBALL_RADIUS 200
 
 extern const int SCREEN_WIDTH;
 extern const int SCREEN_HEIGHT;

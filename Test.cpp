@@ -100,6 +100,11 @@ void loadGame() {
 	am.load("boom", "img/boom.png");
 	am.load("hpbar1", "img/hpbar1.png");
 	am.load("hpbar2", "img/hpbar2.png");
+	am.load("fireball", "img/fireball.png");
+	am.load("fireball_arrow", "img/fireball_arrow.png");
+	am.load("reinforce", "img/reinforce.png");
+	am.load("mask", "img/mask.png");
+	am.load("globalmask", "img/globalmask.png");
 
 	for (int i = 1; i <= 4; i++) {
 		am.load("flag" + to_string(i), "img/flag" + to_string(i) + ".png");

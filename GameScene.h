@@ -686,6 +686,142 @@ private:
 		bgGroup->addChild(upgradeUi);
 	}
 
+	void initSkill() {
+		fireballSkill = new Sprite(am["fireball"]);
+		fireballSkill->position = VecI(50, 520);
+		fireballSkill->setClick([=]() {
+			if (fireballTime > 0) {
+				return;
+			}
+
+			if (!globalMask->visible) {
+				globalMask->visible = true;
+				selectedSkill = 1;
+				tooltipText->text = "Select Position";
+				tooltipText->markDirty();
+				tooltipWindow->visible = true;
+			}
+			else {
+				globalMask->visible = false;
+				tooltipWindow->visible = false;
+			}
+			});
+
+		fireballSkill->setHover([=]() {
+			if (!globalMask->visible) {
+				tooltipText->text = "Fireball Skill";
+				tooltipText->markDirty();
+				tooltipWindow->visible = true;
+			}
+			}, [=]() {if (!globalMask->visible) { tooltipWindow->visible = false; } });
+		auto mask = new Sprite(am["mask"]);
+		mask->color.a = 180;
+		fireballSkill->addChild(mask);
+		fgGroup->addChild(fireballSkill);
+
+
+		reinforceSkill = new Sprite(am["reinforce"]);
+		reinforceSkill->position = VecI(120, 520);
+		reinforceSkill->setClick([=]() {
+			if (reinforceTime > 0) {
+				return;
+			}
+			if (!globalMask->visible) {
+				globalMask->visible = true;
+				selectedSkill = 2;
+				tooltipText->text = "Select Position";
+				tooltipText->markDirty();
+				tooltipWindow->visible = true;
+			}
+			else {
+				globalMask->visible = false;
+				tooltipWindow->visible = false;
+			}
+			});
+		reinforceSkill->setHover([=]() {
+			if (!globalMask->visible) {
+				tooltipText->text = "Reinforce Skill";
+				tooltipText->markDirty();
+				tooltipWindow->visible = true;
+			}
+			}, [=]() {if (!globalMask->visible) { tooltipWindow->visible = false; } });
+		mask = new Sprite(am["mask"]);
+		mask->color.a = 180;
+		reinforceSkill->addChild(mask);
+		fgGroup->addChild(reinforceSkill);
+	}
+
+	void tickSkill() {
+		if (fireballTime > 0) {
+			fireballTime--;
+		}
+		if (reinforceTime > 0) {
+			reinforceTime--;
+		}
+		if (skillLeft > 0) {
+			skillLeft--;
+			assert(selectedSkill == 1);
+			
+			vector<int> candidate;
+			for(int i=0;i<enemyInstances.size();i++){
+				auto& enemy = enemyInstances[i];
+				if (enemy.noProcess) {
+					continue;
+				}
+
+				double dist = (enemy.position - i2d(skillPos)).magnitude();
+				if (dist <= FIREBALL_RADIUS) {
+					candidate.push_back(i);
+				}
+			}
+
+			if (!candidate.empty()) {
+				auto& enemy = enemyInstances[candidate[randInt(0, candidate.size() - 1)]];
+				//add new projectile
+				Sprite* arrow = new Sprite(am["fireball_arrow"]);
+				arrow->position = VecI(skillPos.x+300, -50);
+				arrow->rotation = atan2(enemy.position.y - arrow->position.y, enemy.position.x - arrow->position.x) / PI * 180 + 180;
+
+				EnemyInstance* e = &enemy;
+				actions.add(aseq({
+					amove(arrow,30,d2i(enemy.position + (enemy.state == ENEMY_WALKING ? enemy.speed * 30 : VecD(0,0)))),
+					new ActionRunnable([=]() {
+						if (!e->noProcess) {
+							int dmg = 50;
+							e->hp -= dmg; //remove enemy hp
+							displayDamage(e->position, dmg);
+						}
+
+						arrow->removeFromParent();
+						delete arrow;
+					})
+				}));
+
+				projectileSpriteGroup->addChild(arrow);
+			}
+			else {
+				//decorative :P
+				auto tp = skillPos + VecI(randInt(-100, 100), randInt(-100, 100));
+
+				Sprite* arrow = new Sprite(am["fireball_arrow"]);
+				arrow->position = VecI(skillPos.x + 300, -50);
+				arrow->rotation = atan2(tp.y - arrow->position.y, tp.x - arrow->position.x) / PI * 180 + 180;
+
+				actions.add(aseq({
+					amove(arrow,30,tp),
+					new ActionRunnable([=]() {
+						arrow->removeFromParent();
+						delete arrow;
+					})
+				}));
+
+				projectileSpriteGroup->addChild(arrow);
+			}
+		}
+		fireballSkill->children[0]->size.y = 60 * fireballTime / FIREBALL_TIME;
+		reinforceSkill->children[0]->size.y = 60 * reinforceTime / REINFORCE_TIME;
+	}
+
 public:
 	Sprite* bgImg;
 	LevelInfo lvl;
@@ -726,6 +862,15 @@ public:
 	Sprite* radiusCircle;
 	Sprite* assemblyIndicator;
 	Sprite* assemblyCircle;
+
+	Sprite* fireballSkill;
+	Sprite* reinforceSkill;
+	int fireballTime;
+	int reinforceTime;
+	int selectedSkill;
+	int skillLeft;
+	VecI skillPos;
+	Sprite* globalMask;
 
 	int playerHp = 20;
 	int playerGold = 0;
@@ -839,6 +984,7 @@ public:
 	void displayDamage(VecI pos, int amount) {
 		displayDamage(i2d(pos), amount);
 	}
+
 	void init() override {
 		bgGroup = new Actor();
 		fgGroup = new Actor();
@@ -948,6 +1094,65 @@ public:
 		tooltipWindow->visible = false;
 		fgGroup->addChild(tooltipWindow);
 
+		//building skills
+		initSkill();
+
+
+		//must put last. global mask
+		globalMask = new Sprite(am["globalmask"]);
+		globalMask->visible = false;
+		globalMask->setClick([=]() {
+			assert(selectedSkill != 0);
+			if (selectedSkill == 1) {
+				//fireball
+				skillLeft = 60;
+				skillPos = getMousePosition() - bgGroup->position;
+				fireballTime = FIREBALL_TIME;
+			}
+			else if (selectedSkill == 2) {
+				//reinforce
+				skillPos = getMousePosition() - bgGroup->position;
+				if (!fine(skillPos)) {
+					tooltipText->text = "Invalid position!";
+					tooltipText->markDirty();
+					return;
+				}
+
+				//COPIED FROM TOWERS. CHANGE BOTH REFERENCE!!
+				for (int i = 0; i < 3; i++) {
+					//TODO Farmer
+					auto newSoldier = new Sprite(am.animation("soldier_w", 1, 2), 1e9);
+
+					auto targetPos = skillPos + VecI(randInt(-20, 20), randInt(10, 20));
+					newSoldier->position = targetPos - VecI(0, 50);
+					newSoldier->color.a = 0;
+
+					newSoldier->addChild(generateHpBar());
+					projectileSpriteGroup->addChild(newSoldier);
+
+					auto soldier = Soldier();
+					soldier.locator = newSoldier;
+					soldier.maxhp = soldier.hp = SOLDIER_HP;
+					soldier.state = SOLDIER_IDLE;
+					soldier.assemblyPoint = skillPos;
+					soldier.atk = 50;
+					soldier.from = -1;
+					soldier.id = soldiers.size();
+					soldiers.push_back(soldier);
+
+					int id = soldiers.size() - 1;
+
+					actions.add(aseq({ apara({ aalpha(newSoldier,30,255),amove(newSoldier,30,targetPos) }) }));
+				}
+
+				reinforceTime = REINFORCE_TIME;
+			}
+
+			tooltipWindow->visible = false;
+			globalMask->visible = false;
+
+		});
+		bgGroup->addChild(globalMask);
 	}
 
 	void tick() override {
@@ -957,6 +1162,7 @@ public:
 
 		tickSoldier();
 
+		tickSkill();
 		//ticking towers
 		for (auto x : towerInstances) {
 			if (x != NULL) {

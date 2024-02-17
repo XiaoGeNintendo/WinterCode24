@@ -3,10 +3,6 @@
 #include "Sprite.h"
 #include <map>
 using namespace std;
-#define ASSEMBLY_RANGE 150
-#define SOLDIER_HP 100
-#define BOMB_RADIUS 85
-#define SOLDIER_WANDER_RANGE 50
 
 enum SoldierState {
 	SOLDIER_IDLE,
