@@ -10,6 +10,10 @@ public:
 		speed = VecD(randDouble(), -2);
 	}
 
+	DamageLabel(string text, SDL_Color c) :Label("damage", 12, text, c) {
+		speed = VecD(randDouble(), -2);
+	}
+
 	void render(SDL_Renderer* renderer) override {
 		realPosition = realPosition + speed;
 		speed = speed + VecD(0, 5)/60;

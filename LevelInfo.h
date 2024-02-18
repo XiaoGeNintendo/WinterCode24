@@ -9,9 +9,29 @@ using namespace std;
 
 #define LEVEL_COUNT 3
 #define TOWER_COUNT 4
+#define HERO_COUNT 2
 
 extern int currentLevel;
 extern int currentDifficulty;
+extern int currentHero;
+
+struct HeroData {
+	string id = "";
+	string name = "";
+	int attack = 0;
+	int maxhp=0;
+	int wac=2;
+	int aac=2;
+
+	HeroData() {}
+	HeroData(string id, string name, int attack, int maxhp, int wac, int aac) :id(id), name(name), attack(attack), maxhp(maxhp), wac(wac), aac(aac) {}
+};
+
+struct HeroInstance {
+	int exp;
+	int lvl=1;
+	int cd;
+};
 
 struct EnemyData {
 	string id="";
@@ -69,6 +89,8 @@ struct LevelInfo {
 
 extern LevelInfo levels[LEVEL_COUNT];
 extern Tower* towers[TOWER_COUNT];
+extern HeroData heros[HERO_COUNT];
+
 extern function<Tower* ()> towersCreateFunction[TOWER_COUNT];
 
 void loadLevelInfos();

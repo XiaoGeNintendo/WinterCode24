@@ -103,7 +103,7 @@ void ArcherTower::tick()
 					amove(arrow,10,d2i(enemy.position + (enemy.state == ENEMY_WALKING ? enemy.speed * 5 : VecD(0,0)))),
 					new ActionRunnable([=]() {
 						if (!e->noProcess) {
-							int dmg = (5 + 5 * level) - e->data->defense;
+							int dmg = max(0,(5 + 5 * level) - e->data->defense);
 							e->hp -= dmg; //remove enemy hp
 							sc->displayDamage(e->position, dmg);
 						}
@@ -121,7 +121,7 @@ void ArcherTower::tick()
 				}
 			}
 		}
-		lastArrow = 45;
+		lastArrow = 45 / sc->getHeroBonus(position);;
 	}
 }
 
@@ -181,7 +181,7 @@ void BomberTower::tick()
 
 			};
 			sc->projectileSpriteGroup->addChild(bomb);
-			lastBomb = 60 * 3 - 30 * level;
+			lastBomb = (60 * 3 - 30 * level)/sc->getHeroBonus(position);
 			break;
 		}
 	}
@@ -247,7 +247,7 @@ void MageTower::tick()
 			enemy.slowdownTimer += 2;
 			sc->displayDamage(enemy.position, 1);
 		}
-		lastTick = 6 - level;
+		lastTick = (6 - level)/sc->getHeroBonus(position);
 	}
 }
 

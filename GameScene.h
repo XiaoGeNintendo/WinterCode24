@@ -13,6 +13,7 @@
 #include "Random.h"
 #include "ParticleSprite.h"
 #include "DamageLabel.h"
+#include "BombSprite.h"
 #include <set>
 #include <string>
 using namespace std;
@@ -23,6 +24,9 @@ using namespace std;
 class GameScene : public Scene {
 private:
 
+	int getHeroMaxhp() {
+		return heros[currentHero].maxhp* difficultySelect(4, 2, 2, 1);
+	}
 
 	int getFireballCD() {
 		return FIREBALL_TIME * difficultySelect(1, 2, 3, 3);
@@ -352,6 +356,11 @@ private:
 				pair<int, int> bestEnemy = { 100,-1 };
 
 				for (auto& enemy : enemyInstances) {
+
+					if (enemy.noProcess) {
+						continue;
+					}
+
 					double dist = (enemy.position - i2d(soldier.assemblyPoint)).magnitude();
 					if (dist > ASSEMBLY_RANGE) { //too far
 						continue;
@@ -402,20 +411,34 @@ private:
 				if (soldier.attackTimer < 0) {
 					soldier.attackTimer = 60;
 					auto& atk = enemyInstances[soldier.fighting];
-					atk.hp -= max(0,soldier.atk - atk.data->defense);
-					displayDamage(atk.position, soldier.atk - atk.data->defense);
+					int dmg = max(0, (soldier.atk - atk.data->defense) * (heroPointer == i && randInt(1, 4) == 1 && currentHero == 0 ? 2 : 1));
+					atk.hp -= dmg; //momiji fight master
+					displayDamage(atk.position, dmg);
+
+					if (heroPointer == i) {
+						heroInstance.exp++;
+
+						if (atk.hp <= 0) {
+							heroInstance.exp += 3;
+						}
+					}
 				}
 			}
 			else if (soldier.state == SOLDIER_RETREATING) {
 				soldier.locator->position = soldier.steps.back();
 				soldier.steps.pop_back();
+
+				if (i == heroPointer && soldier.steps.size() != 0) {
+					soldier.steps.pop_back();
+				}
+
 				if (soldier.steps.size() == 0) {
 					soldier.state = SOLDIER_IDLE;
 				}
 			}
 
 			//update sprite
-			string prefix = soldier.from == -1 ? "farmer" : "soldier";
+			string prefix = i==heroPointer ? heros[currentHero].id : soldier.from == -1 ? "farmer" : "soldier";
 
 			if (soldier.state == SOLDIER_IDLE) {
 				soldier.locator->setAnimation(am.animation(prefix+"_w", 1, 2), 1e9);
@@ -429,6 +452,96 @@ private:
 				soldier.locator->flipX = true;
 			}
 		}
+	}
+
+	void tickHero() {
+		if (heroInstance.cd > 0) {
+			heroInstance.cd--;
+		}
+		if (heroInstance.cd <= 0) {
+			if (currentHero == 0) {
+				//momiji
+				for (auto& s : soldiers) {
+
+					if (s.noProcess) {
+						continue;
+					}
+
+					int dist = (s.locator->position - soldiers[heroPointer].locator->position).magnitude();
+					if (dist <= ASSEMBLY_RANGE) {
+						s.hp = min(s.hp + 5 + heroInstance.lvl * 5, s.maxhp);
+						displayHeal(i2d(s.locator->position),5 + heroInstance.lvl * 5);
+					}
+				}
+
+				heroInstance.cd = max(300 - heroInstance.lvl * 20, 60);
+			}
+			else if (currentHero == 1) {
+				//nitori
+
+				if (soldiers[heroPointer].state == SOLDIER_IDLE) {
+					int count = 0;
+					for (auto& e : enemyInstances) {
+						if (e.noProcess) {
+							continue;
+						}
+
+						//shoot bomb at it
+						VecD shootPos = i2d(soldiers[heroPointer].locator->position);
+
+						const int IGNITE = 120;
+
+						auto bomb = new BombSprite(am["bomb"], shootPos, e.position + (e.state == ENEMY_WALKING ? e.speed * IGNITE / 2 : VecD(0, 0)), VecD(shootPos.x, 0), IGNITE);
+						bomb->realPosition = shootPos;
+						bomb->size = bomb->size * 2;
+						bomb->ignite = [=]() {
+							for (auto& enemy : enemyInstances) {
+								if (enemy.noProcess) {
+									continue;
+								}
+
+
+								double dist = (enemy.position - bomb->realPosition).magnitude();
+								if (dist > BOMB_RADIUS) {
+									continue;
+								}
+
+								int dmg = (40 + 5 * heroInstance.lvl) * (BOMB_RADIUS - dist) / BOMB_RADIUS - enemy.data->defense;
+								if (dmg > 0) {
+									enemy.hp -= dmg;
+									displayDamage(enemy.position, dmg);
+								}
+							}
+
+							bomb->texture = am["boom"];
+							bomb->size = am["boom"]->size();
+							actions.add(aseq({ aalpha(bomb,30,0),new ActionRunnable([=]() {bomb->removeFromParent(); delete bomb; }) }));
+						};
+						projectileSpriteGroup->addChild(bomb);
+
+						count++;
+
+						if (count == 3) {
+							break;
+						}
+					}
+
+					heroInstance.cd= max(450 - heroInstance.lvl * 30, 120);
+				}
+			}
+		}
+
+		if (heroInstance.exp >= 30) {
+			heroInstance.exp -= 30;
+			heroInstance.lvl++;
+			soldiers[heroPointer].atk += 5;
+		}
+
+		heroLevel->text = to_string(heroInstance.lvl);
+		heroLevel->markDirty();
+		
+		heroHpBar->size.x = 40 * soldiers[heroPointer].hp / getHeroMaxhp();
+		heroExpBar->size.x = 40 * heroInstance.exp / 30;
 	}
 
 	bool fine(VecI x) {
@@ -1003,6 +1116,60 @@ private:
 		fgGroup->addChild(reinforceSkill);
 	}
 
+	void initHero() {
+		heroBg = new Sprite(am["herobg"]);
+		heroBg->pivot = { 0.5,0.5 };
+		heroBg->position = { 50,120 };
+		fgGroup->addChild(heroBg);
+
+		heroIcon = new Sprite(am[heros[currentHero].id + "_t"]);
+		heroIcon->position = { 0,0 };
+		heroIcon->pivot = { 0.5,0.5 };
+		heroIcon->setClick([=]() {
+			if (!globalMask->visible) {
+				globalMask->visible = true;
+				selectedSkill = 3;
+				tooltipText->text = "Redeploy "+heros[currentHero].name;
+				tooltipText->markDirty();
+				tooltipWindow->visible = true;
+			} else {
+				globalMask->visible = false;
+				tooltipWindow->visible = false;
+			}
+		});
+
+		heroBg->addChild(heroIcon);
+		
+		heroLevel = new Label("global", 16, "1", { 0,0,255,255 });
+		heroLevel->position = { 16,12 };
+		heroBg->addChild(heroLevel);
+
+		heroHpBar = new Sprite(am["hpbar2"]);
+		heroHpBar->position = { -20,30 };
+		heroHpBar->size.x = 40;
+		heroBg->addChild(heroHpBar);
+		heroExpBar = new Sprite(am["hpbar2"]);
+		heroExpBar->position = { -20,40 };
+		heroExpBar->size.x = 40;
+		heroBg->addChild(heroExpBar);
+
+		//generate hero itself
+		auto newSoldier = new Sprite(am.animation(heros[currentHero].id + "_w", 1, heros[currentHero].wac), 1e9);
+		newSoldier->position = lvl.path[0].back();
+		newSoldier->addChild(generateHpBar());
+		projectileSpriteGroup->addChild(newSoldier);
+
+		auto soldier = Soldier();
+		soldier.locator = newSoldier;
+		soldier.maxhp = soldier.hp = getHeroMaxhp();
+		soldier.state = SOLDIER_IDLE;
+		soldier.assemblyPoint = lvl.path[0].back();
+		soldier.atk = heros[currentHero].attack;
+		soldier.from = -1;
+		heroPointer = soldier.id = soldiers.size();
+		soldiers.push_back(soldier);
+	}
+
 	void tickSkill() {
 		if (fireballTime > 0) {
 			fireballTime--;
@@ -1012,8 +1179,6 @@ private:
 		}
 		if (skillLeft > 0) {
 			skillLeft--;
-			assert(selectedSkill == 1);
-			
 			vector<int> candidate;
 			for(int i=0;i<enemyInstances.size();i++){
 				auto& enemy = enemyInstances[i];
@@ -1039,7 +1204,7 @@ private:
 					amove(arrow,30,d2i(enemy.position + (enemy.state == ENEMY_WALKING ? enemy.speed * 30 : VecD(0,0)))),
 					new ActionRunnable([=]() {
 						if (!e->noProcess) {
-							int dmg = difficultySelect(50, 30, 20, 10);
+							int dmg = difficultySelect(60, 50, 40, 30);
 							e->hp -= dmg; //remove enemy hp
 							displayDamage(e->position, dmg);
 						}
@@ -1079,6 +1244,7 @@ private:
 			VecI pos = lvl.enemyMarks[i];
 			auto x = new Sprite(am["enemymark"]);
 			x->position = pos;
+			x->pivot = { 0.5,0.5 };
 			x->setHover([=]() {
 				tooltipText->text = "Next wave";
 				tooltipText->markDirty();
@@ -1161,6 +1327,14 @@ public:
 	Sprite* gameoverDialog;
 	Sprite* pauseBtn;
 
+	Sprite* heroBg;
+	Sprite* heroIcon;
+	Label* heroLevel;
+	Sprite* heroHpBar;
+	Sprite* heroExpBar;
+	HeroInstance heroInstance;
+	int heroPointer;
+
 	int playerHp = 20;
 	int playerGold = 0;
 
@@ -1198,6 +1372,9 @@ public:
 		int n = bgImg->size.x;
 		int m = bgImg->size.y;
 
+		if (end.x >= n || end.x < 0 || end.y >= m || end.y < 0) {
+			return {};
+		}
 
 		priority_queue <distType, vector<distType>, greater<distType>> q;
 
@@ -1252,6 +1429,17 @@ public:
 		return {};
 	}
 
+	void displayHeal(VecD pos, int amount) {
+
+		DamageLabel* lbl = new DamageLabel(to_string(amount), {0,255,0,255});
+
+		lbl->realPosition = pos;
+
+		//should be pooling but i am lazy
+		actions.add(aseq({ adelay(15),aalpha(lbl,15,0),aremove(lbl) }));
+		projectileSpriteGroup->addChild(lbl);
+	}
+
 	void displayDamage(VecD pos, int amount) {
 
 		DamageLabel* lbl;
@@ -1273,6 +1461,15 @@ public:
 
 	void displayDamage(VecI pos, int amount) {
 		displayDamage(i2d(pos), amount);
+	}
+
+	double getHeroBonus(VecI pos) {
+		if (currentHero == 1 && (pos - soldiers[heroPointer].locator->position).magnitude() <= 100) {
+			return 2;
+		}
+		else {
+			return 1;
+		}
 	}
 
 	void init() override {
@@ -1432,6 +1629,8 @@ public:
 		waveBar2->size.x = WAVE_BAR_LENGTH;
 		waveIndicator->addChild(waveBar2);
 
+		initHero();
+
 		//must put last. global mask
 		globalMask = new Sprite(am["globalmask"]);
 		globalMask->visible = false;
@@ -1480,6 +1679,19 @@ public:
 
 				reinforceTime = getReinforceCD();
 			}
+			else if (selectedSkill == 3) {
+				//hero move
+				skillPos = getMousePosition() - bgGroup->position;
+				if (!fine(skillPos)) {
+					tooltipText->text = "Invalid position!";
+					tooltipText->markDirty();
+					return;
+				}
+
+				soldiers[heroPointer].assemblyPoint = skillPos;
+				soldiers[heroPointer].state = SOLDIER_RETREATING;
+				soldiers[heroPointer].steps = pathfind(soldiers[heroPointer].locator->position, skillPos,false);
+			}
 
 			tooltipWindow->visible = false;
 			globalMask->visible = false;
@@ -1501,6 +1713,9 @@ public:
 		tickSoldier();
 
 		tickSkill();
+
+		tickHero();
+
 		//ticking towers
 		for (auto x : towerInstances) {
 			if (x != NULL) {
@@ -1520,23 +1735,24 @@ public:
 
 		//move map with mouse
 		const int SPEED = 9;
+		const int MAGIC = 20;
 		auto mouse = getMousePosition();
-		if (mouse.x >= SCREEN_WIDTH - 50) {
+		if (mouse.x >= SCREEN_WIDTH - MAGIC) {
 			if (bgImg->size.x + bgGroup->position.x - SPEED> SCREEN_WIDTH) {
 				bgGroup->position.x-=SPEED;
 			}
 		}
-		if (mouse.x <= 50) {
+		if (mouse.x <= MAGIC) {
 			if (bgGroup->position.x<0) {
 				bgGroup->position.x += SPEED;
 			}
 		}
-		if (mouse.y >= SCREEN_HEIGHT - 50) {
+		if (mouse.y >= SCREEN_HEIGHT - MAGIC) {
 			if (bgImg->size.y + bgGroup->position.y - SPEED> SCREEN_HEIGHT) {
 				bgGroup->position.y -= SPEED;
 			}
 		}
-		if (mouse.y <= 50) {
+		if (mouse.y <= MAGIC) {
 			if (bgGroup->position.y < 0) {
 				bgGroup->position.y += SPEED;
 			}

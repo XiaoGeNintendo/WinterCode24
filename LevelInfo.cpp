@@ -7,10 +7,12 @@ using namespace std;
 
 int currentLevel = 0;
 int currentDifficulty = 0;
+int currentHero = 0;
 
 LevelInfo levels[LEVEL_COUNT];
 //sample towers
 Tower* towers[TOWER_COUNT];
+HeroData heros[HERO_COUNT];
 function<Tower* ()> towersCreateFunction[TOWER_COUNT];
 
 string difficultyString(int a) {
@@ -47,6 +49,11 @@ int difficultySelect(int e, int n, int h, int l)
 
 void loadLevelInfos() {
 
+	//load hero
+	heros[0] = HeroData("momiji","Momiji",45,250,3,3);
+	heros[1] = HeroData("nitori", "Nitori", 15, 150, 3, 3);
+
+	//load towers
 	towers[0] = new SoldierTower();
 	towersCreateFunction[0] = []() {return new SoldierTower(); };
 	towers[1] = new ArcherTower();

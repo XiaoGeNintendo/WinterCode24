@@ -114,6 +114,7 @@ void loadGame() {
 	am.load("back", "img/back.png");
 	am.load("setting", "img/setting.png");
 	am.load("null", "img/null.png");
+	am.load("herobg", "img/herobg.png");
 
 	for (int i = 1; i <= 4; i++) {
 		am.load("flag" + to_string(i), "img/flag" + to_string(i) + ".png");
@@ -138,6 +139,8 @@ void loadGame() {
 	am.loadEnemy("dk", 2, 2);
 	am.loadEnemy("ghost", 4, 2);
 	am.loadEnemy("ske", 2, 5);
+	am.loadEnemy("momiji", 3, 3,true);
+	am.loadEnemy("nitori", 3, 3, true);
 
 	//load fonts
 	am.preloadFont("global", "font/font.ttf");
@@ -161,6 +164,7 @@ void loadGame() {
 
 	//scenes.add(new TitleScene());
 	currentLevel = 1;
+	currentHero = 1;
 	scenes.add(new GameScene()); //test only
 
 
