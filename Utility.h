@@ -4,6 +4,7 @@
 #include "Vector2.h"
 #include <vector>
 #include <string>
+#include "LevelInfo.h"
 using namespace std;
 
 /**

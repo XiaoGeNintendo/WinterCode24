@@ -229,6 +229,8 @@ private:
 			d->position = { 0,45 };
 			d->pivot = { 0.5,0.5 };
 			d->fClick = [=]() {
+				save.pass[currentLevel][currentDifficulty]=true;
+				saveSave();
 				recoverState();
 			};
 			winDialog->addChild(d);

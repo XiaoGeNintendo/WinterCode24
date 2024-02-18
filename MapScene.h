@@ -8,6 +8,7 @@
 #include "GraphicsConstant.h"
 #include "LevelInfo.h"
 #include "DifficultyScene.h"
+#include "Utility.h"
 
 class MapScene : public Scene {
 private:
@@ -56,9 +57,17 @@ public:
 
 		//add level button
 		auto imgs = am.animation("flag",1,4);
+		auto imgs2 = am.animation("flagb", 1, 4);
 
 		for (int i = 0; i < LEVEL_COUNT; i++) {
-			auto x = new Sprite(imgs,20);
+			Sprite* x;
+			if (passHistory(i)) {
+				x = new Sprite(imgs2, 20);
+			}
+			else {
+				x = new Sprite(imgs, 20);
+			}
+
 			x->size = x->size * 4;
 			x->pivot = { 0.5,0.5 };
 			x->color.a = 0;

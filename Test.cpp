@@ -67,6 +67,9 @@ bool init() {
 }
 
 void loadGame() {
+	//load game save
+	loadSave();
+
 	//load assets
 	am.load("zyq", "img/son.png");
 	am.load("title", "img/title.png");
@@ -112,6 +115,9 @@ void loadGame() {
 
 	for (int i = 1; i <= 4; i++) {
 		am.load("flag" + to_string(i), "img/flag" + to_string(i) + ".png");
+	}
+	for (int i = 1; i <= 4; i++) {
+		am.load("flagb" + to_string(i), "img/flagb" + to_string(i) + ".png");
 	}
 	for (int i = 1; i <= 4; i++) {
 		am.load("magic" + to_string(i), "img/magic" + to_string(i) + ".png");

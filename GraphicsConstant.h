@@ -5,6 +5,7 @@
 #include "Scene.h"
 #include "AssetManager.h"
 #include <SDL_ttf.h>
+#include "LevelInfo.h"
 
 #define PI 3.141592653589
 #define ASSEMBLY_RANGE 150
@@ -41,3 +42,15 @@ extern bool appCloseFlag;
 extern ActionManager actions;
 extern SceneManager scenes;
 extern AssetManager am;
+
+struct SaveFile {
+	bool pass[LEVEL_COUNT][4];
+	bool se=true;
+	bool bgm=true;
+};
+
+extern SaveFile save;
+
+void loadSave();
+void saveSave();
+bool passHistory(int lvl);
