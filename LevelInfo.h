@@ -30,7 +30,8 @@ struct EnemyData {
 	//attacking animation count
 	int aac=2;
 	bool thumbnail=false;
-
+	bool blockable = true;
+	
 	EnemyData() {}
 
 	EnemyData(string _id, string _name, 

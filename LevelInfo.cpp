@@ -57,33 +57,127 @@ void loadLevelInfos() {
 	towersCreateFunction[3] = []() {return new MageTower(); };
 
 	//load level 1
-	auto goblin = EnemyData("goblin", "Goblin", 1, 10, 0, 60, 30, 0, 100, true, 2, 3, false);
-	auto wolf = EnemyData("wolf", "Wolf", 2, 8, 2, 40, 30, 0, 80, true, 2, 2, true);
-	levels[0].enemies["gb"] = goblin;
-	levels[0].enemies["wf"] = wolf;
-	levels[0].desc = { "Enemies are attacking the kingdom in all directions!","Use hero and towers to protect yourself!","Time to get familiar with the towers!!" };
-	levels[0].background = "level0";
-	levels[0].deployPosition = { {272,363},{164,417},{73,570},{84,664},{104,778},{149,867},{1296,657},{1128,651},{964,658},{821,656},{694,653},{515,617},{621,485},{679,338}, };
-	levels[0].waves.resize(6);
-	for (int i = 0; i < 3; i++) {
-		levels[0].waves[i].length = 60*30;
-		levels[0].waves[i].enemies = repeat(string("gb"), (i+1)*5);
-		levels[0].waves[i].delay = 60-20*i;
+	{
+		auto goblin = EnemyData("goblin", "Goblin", 1, 10, 0, 60, 30, 0, 100, true, 2, 3, false);
+		auto wolf = EnemyData("wolf", "Wolf", 2, 8, 2, 40, 30, 0, 80, true, 2, 2, true);
+		levels[0].enemies["gb"] = goblin;
+		levels[0].enemies["wf"] = wolf;
+		levels[0].desc = { "Enemies are attacking the kingdom in all directions!","Use hero and towers to protect yourself!","Time to get familiar with the towers!!" };
+		levels[0].background = "level0";
+		levels[0].deployPosition = { {272,363},{164,417},{73,570},{84,664},{104,778},{149,867},{1296,657},{1128,651},{964,658},{821,656},{694,653},{515,617},{621,485},{679,338}, };
+		levels[0].waves.resize(6);
+		for (int i = 0; i < 3; i++) {
+			levels[0].waves[i].length = 60 * 30;
+			levels[0].waves[i].enemies = repeat(string("gb"), (i + 1) * 5);
+			levels[0].waves[i].delay = 60 - 20 * i;
+		}
+		levels[0].waves[3].length = 60 * 30;
+		levels[0].waves[3].enemies = repeat("wf", 5);
+		levels[0].waves[3].delay = 60;
+		levels[0].waves[4].length = 60 * 30;
+		levels[0].waves[4].enemies = repeat("gb", 10) + repeat("wf", 5);
+		levels[0].waves[4].delay = 30;
+		levels[0].waves[5].length = 60 * 30;
+		levels[0].waves[5].enemies = repeatv({ "gb","wf" }, 15);
+		levels[0].waves[5].delay = 20;
+
+		levels[0].enemyMarks = { {515,42} };
+		levels[0].path[0] = { {429,12},{419,351},{331,441},{254,490},{172,576},{166,720},{207,812},{314,868},{467,885},{1435,895}, };
+		levels[0].path[1] = { {514,13},{513,370},{290,572},{281,719},{533,811},{1383,807}, };
+		levels[0].path[2] = { {601,14},{594,400},{403,547},{399,689},{511,762},{1435,742}, };
+		levels[0].obstacles = { {{0,0},{423,291}},{{618,118},{1435,272}},{{1028,611},{1412,241}} };
 	}
-	levels[0].waves[3].length = 60 * 30;
-	levels[0].waves[3].enemies = repeat("wf", 5);
-	levels[0].waves[3].delay = 60;
-	levels[0].waves[4].length = 60 * 30;
-	levels[0].waves[4].enemies = repeat("gb",10)+repeat("wf", 5);
-	levels[0].waves[4].delay = 30;
-	levels[0].waves[5].length = 60 * 30;
-	levels[0].waves[5].enemies = repeatv({ "gb","wf" }, 15);
-	levels[0].waves[5].delay = 20;
+	//load level 2
+	{
+		levels[1].desc = { "More monsters are joining in this battle!","Moreover, they have chosen a more complex terrain.","Be careful! Some enemies may ambush!","BTW you will not know where they are coming..","Show your wisdom to the king!" };
+		levels[1].background = "level1";
 
-	levels[0].enemyMarks = { {515,42} };
-	levels[0].path[0] = {{429,12},{419,351},{331,441},{254,490},{172,576},{166,720},{207,812},{314,868},{467,885},{1435,895}, };
-	levels[0].path[1] = {{514,13},{513,370},{290,572},{281,719},{533,811},{1383,807}, };
-	levels[0].path[2] = { {601,14},{594,400},{403,547},{399,689},{511,762},{1435,742}, };
-	levels[0].obstacles = { {{0,0},{423,291}},{{618,118},{1435,272}},{{1028,611},{1412,241}} };
+		auto goblin = EnemyData("goblin", "Goblin", 1, 10, 0, 60, 10, 0, 100, true, 2, 3, false);
+		auto goblin2 = EnemyData("goblin", "Goblin", 1, 10, 0, 60, 10, 3, 100, true, 2, 3, false);
+		auto goblin3 = EnemyData("goblin", "Goblin", 1, 10, 0, 60, 10, 8, 100, true, 2, 3, false);
+		auto wolf = EnemyData("wolf", "Wolf", 2, 8, 2, 40, 15, 0, 80, true, 2, 2, true);
+		auto wolf2 = EnemyData("wolf", "Wolf", 2, 8, 2, 40, 15, 3, 80, true, 2, 2, true);
+		auto wolf3 = EnemyData("wolf", "Wolf", 2, 8, 2, 40, 15, 8, 80, true, 2, 2, true);
+		auto dk = EnemyData("dk", "Dark Knight", 0.8, 20, 50, 60, 30, 8, 150, true, 2, 2, false);
+		auto ske = EnemyData("ske", "Skeleton", 1, 25, -10, 90, 5, 6, 20, false, 2,5, false);
+		auto ske2 = EnemyData("ske", "Skeleton", 1, 25, -10, 90, 5, 7, 20, false, 2, 5, false);
+		auto ghost = EnemyData("ghost", "Ghost", 1.5, 0, 0, 0, 15, 8, 75, true, 4, 2, false);
+		ghost.blockable = false;
 
+		levels[1].enemies["gb1"] = goblin;
+		levels[1].enemies["gb2"] = goblin2;
+		levels[1].enemies["gb3"] = goblin3;
+		levels[1].enemies["w1"] = wolf;
+		levels[1].enemies["w2"] = wolf2;
+		levels[1].enemies["w3"] = wolf3;
+		levels[1].enemies["s1"] = ske;
+		levels[1].enemies["s2"] = ske2;
+		levels[1].enemies["dk"] = dk;
+		levels[1].enemies["g"] = ghost;
+
+		levels[1].waves.resize(12);
+
+		levels[1].waves[0].delay = 20;
+		levels[1].waves[0].length = 60 * 30;
+		levels[1].waves[0].enemies = repeat("gb1", 5);
+
+		levels[1].waves[1].delay = 15;
+		levels[1].waves[1].length = 60 * 30;
+		levels[1].waves[1].enemies = repeatv({"gb1","gb2"}, 5);
+
+		levels[1].waves[2].delay = 10;
+		levels[1].waves[2].length = 60 * 30;
+		levels[1].waves[2].enemies = repeatv({ "w1","gb1","w2","gb2"}, 2);
+
+		levels[1].waves[3].delay = 15;
+		levels[1].waves[3].length = 60 * 30;
+		levels[1].waves[3].enemies = repeatv({ "gb3","w3"}, 5);
+
+		levels[1].waves[4].delay = 15;
+		levels[1].waves[4].length = 60 * 30;
+		levels[1].waves[4].enemies = repeatv({ "w1","w2","w3"}, 5);
+
+		levels[1].waves[5].delay = 5;
+		levels[1].waves[5].length = 60 * 30;
+		levels[1].waves[5].enemies = repeatv({ "s1","s2"}, 15);
+
+		levels[1].waves[6].delay = 20;
+		levels[1].waves[6].length = 60 * 30;
+		levels[1].waves[6].enemies = repeat("dk",1)+repeatv({"gb1","w2"}, 3);
+
+		levels[1].waves[7].delay = 10;
+		levels[1].waves[7].length = 60 * 30;
+		levels[1].waves[7].enemies = repeat("w3", 5) + repeat("gb3", 5) + repeat("dk", 3);
+
+		levels[1].waves[8].delay = 10;
+		levels[1].waves[8].length = 60 * 30;
+		levels[1].waves[8].enemies = repeatv({ "dk","s1","s2" }, 5);
+
+		levels[1].waves[9].delay = 20;
+		levels[1].waves[9].length = 60 * 30;
+		levels[1].waves[9].enemies = repeatv({ "g","w3" }, 5);
+
+		levels[1].waves[10].delay = 7;
+		levels[1].waves[10].length = 60 * 30;
+		levels[1].waves[10].enemies = repeatv({ "g","gb1","gb3","w2","dk","w3" }, 4);
+
+		levels[1].waves[11].delay = 5;
+		levels[1].waves[11].length = 60 * 30;
+		levels[1].waves[11].enemies = repeatv({ "g","gb1","gb2","gb3","w2","w1","dk","w3","s1","s2","s1","s2","s2"}, 4);
+
+		levels[1].deployPosition = { {304,103},{158,191},{661,162},{548,221},{384,295},{420,390},{573,399},{711,454},{806,513},{1207,450},{1240,569},{1257,737},{1058,593},{918,665},{911,760},{907,874},{1116,682},{1109,794},{1125,911},{612,931},{612,844},{610,746},{546,670},{458,603},{380,613},{388,733},{381,848},{140,582},{134,698},{138,816}, };
+		levels[1].path[0] = { {517,23},{509,89},{388,147},{296,178},{218,225},{189,325},{185,440},{199,562},{196,663},{194,732},{193,825},{196,900}, };
+		levels[1].path[1] = { {587,9},{565,83},{275,251},{252,427},{248,941}, };
+		levels[1].path[2] = { {637,10},{636,83},{511,173},{330,228},{318,344},{317,467},{325,938}, };
+		levels[1].path[3] = { {523,7},{510,98},{185,270},{174,480},{376,552},{502,554},{613,610},{682,709},{685,818},{688,932} };
+		levels[1].path[4] = { {585,5},{572,99},{244,270},{240,466},{552,519},{755,669},{763,932}, };
+		levels[1].path[5] = { {649,8},{634,83},{310,251},{311,427},{465,467},{664,493},{800,589},{848,941}, };
+		levels[1].path[6] = { {1067,361},{1063,466},{1145,483},{1195,946}, }; //special path 1
+		levels[1].path[7] = { { 1065,367 }, { 1060,468 }, { 961,495 }, { 822,621 }, { 819,941 } };  //special path 2
+		levels[1].path[8] = { {24,411},{156,403},{359,559},{515,561},{684,700},{681,940}, };
+		levels[1].path[9] = { {4,345},{152,337},{250,336},{264,492},{539,507},{766,714},{774,935}, };
+		levels[1].path[10] = { {6,276},{160,270},{345,451},{635,465},{792,600},{819,945}, };
+		levels[1].enemyMarks = { {587,9},{4,345}, {1067,361} };
+		levels[1].obstacles = { {{832,2},{1437,281}},{{981,182},{741,400}} };
+	}
 }

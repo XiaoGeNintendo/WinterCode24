@@ -168,7 +168,7 @@ void BomberTower::tick()
 						continue;
 					}
 
-					int dmg = (60 + 10 * level) * (BOMB_RADIUS - dist) / BOMB_RADIUS - enemy.data->defense;
+					int dmg = (75 + 10 * level) * (BOMB_RADIUS - dist) / BOMB_RADIUS - enemy.data->defense;
 					if (dmg > 0) {
 						enemy.hp -= dmg;
 						sc->displayDamage(enemy.position, dmg);

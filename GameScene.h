@@ -145,7 +145,7 @@ private:
 				sp->setAnimation(am.animation(enemy.data->id + "_w", 1, enemy.data->wac), 1e9);
 			}
 			else if (enemy.state == ENEMY_FIGHTING) {
-				sp->setAnimation(am.animation(enemy.data->id + "_a", 1, enemy.data->wac), 20);
+				sp->setAnimation(am.animation(enemy.data->id + "_a", 1, enemy.data->aac), 20);
 				sp->flipX = false;
 			}
 
@@ -361,6 +361,10 @@ private:
 						continue;
 					}
 
+					if (!enemy.data->blockable) {
+						continue;
+					}
+
 					bestEnemy = min(bestEnemy, make_pair((int)(enemy.fighting.size()), enemy.id));
 
 				}
@@ -398,7 +402,7 @@ private:
 				if (soldier.attackTimer < 0) {
 					soldier.attackTimer = 60;
 					auto& atk = enemyInstances[soldier.fighting];
-					atk.hp -= soldier.atk - atk.data->defense;
+					atk.hp -= max(0,soldier.atk - atk.data->defense);
 					displayDamage(atk.position, soldier.atk - atk.data->defense);
 				}
 			}
@@ -535,8 +539,8 @@ private:
 			}
 
 			if (ok) {
-				dialogBg->visible = true;
-				winDialog->visible = true;
+				//dialogBg->visible = true;
+				//winDialog->visible = true;
 			}
 		}
 	}

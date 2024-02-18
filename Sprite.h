@@ -86,7 +86,7 @@ public:
 			if (frameCounter >= animationDelay) {
 				frameCounter = 0;
 				animationCounter++;
-				if (animationCounter == animation.size()) {
+				if (animationCounter >= animation.size()) {
 					animationCounter = 0;
 				}
 

@@ -78,6 +78,8 @@ void loadGame() {
 	am.load("dialog", "img/dialog.png");
 	am.load("fightBtn", "img/fightBtn.png");
 	am.load("level0", "img/level0.png");
+	am.load("level1", "img/level1.png");
+	am.load("level2", "img/level2.png");
 	am.load("difficultyMarker", "img/difficultyMarker.png");
 	am.load("signpost", "img/signpost.png");
 	am.load("heartBar", "img/heartbar.png");
@@ -133,6 +135,9 @@ void loadGame() {
 	am.loadEnemy("wolf", 2, 2, true);
 	am.loadEnemy("soldier", 2, 2);
 	am.loadEnemy("farmer", 2, 2);
+	am.loadEnemy("dk", 2, 2);
+	am.loadEnemy("ghost", 4, 2);
+	am.loadEnemy("ske", 2, 5);
 
 	//load fonts
 	am.preloadFont("global", "font/font.ttf");
@@ -154,8 +159,9 @@ void loadGame() {
 	//load game content
 	loadLevelInfos();
 
-	scenes.add(new TitleScene());
-	//scenes.add(new GameScene()); //test only
+	//scenes.add(new TitleScene());
+	currentLevel = 1;
+	scenes.add(new GameScene()); //test only
 
 
 	printf("Game Loaded!\n");
