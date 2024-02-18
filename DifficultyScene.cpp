@@ -14,7 +14,7 @@ void DifficultyScene::init() {
 	fgGroup->addChild(bg);
 
 	//add title
-	titleLabel = new Label("global", 48, "Level " + to_string(currentLevel), { 233,233,233,255 });
+	titleLabel = new Label("global", 48, "Level " + to_string(currentLevel+1), { 233,233,233,255 });
 	titleLabel->pivot = { 0,0 };
 	titleLabel->position = { 50,-200 };
 	bg->addChild(titleLabel);
@@ -53,10 +53,24 @@ void DifficultyScene::init() {
 	diffMarker->position = { 40,35 };
 	bg->addChild(diffMarker);
 
+	//select hero
+	auto heroLabel = new Label("global", 14, "Select Hero:", { 255,255,255,255 });
+	heroLabel->position = { 50,150 };
+	bg->addChild(heroLabel);
+
+	hero = new Sprite(am[heros[currentHero].id + "_t"]);
+	hero->pivot = { 0.5,0.5 };
+	hero->position = { 100,190 };
+	hero->setClick([=]() {
+		currentHero = (currentHero + 1) % HERO_COUNT;
+		hero->texture = am[heros[currentHero].id + "_t"];
+	});
+	bg->addChild(hero);
+
 	//start button
 	fightBtn = new Sprite(am["fightBtn"]);
 	fightBtn->pivot = { 0,1 };
-	fightBtn->position = { 50,220 };
+	fightBtn->position = { 170,220 };
 	fightBtn->setClick([&]() {
 		scenes.set(new GameScene());
 		});
@@ -65,7 +79,7 @@ void DifficultyScene::init() {
 	//back button
 	backBtn = new Sprite(am["back"]);
 	backBtn->pivot = { 0,1 };
-	backBtn->position = { 105,220 };
+	backBtn->position = { 225,220 };
 	backBtn->setClick([&]() {
 		scenes.back();
 		});

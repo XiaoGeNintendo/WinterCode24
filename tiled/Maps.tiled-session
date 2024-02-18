@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "level0.tmx",
+    "activeFile": "level2.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -41,6 +41,14 @@
             "scaleInDock": 1,
             "scaleInEditor": 3
         },
+        "Terrian.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 2
+        },
+        "dungeon.tsx": {
+            "scaleInDock": 2,
+            "scaleInEditor": 4
+        },
         "level0.tmx": {
             "scale": 0.33,
             "selectedLayer": 0,
@@ -56,6 +64,14 @@
                 "x": 611.3333333333333,
                 "y": 476.66666666666663
             }
+        },
+        "level2.tmx": {
+            "scale": 0.75,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 483.3333333333333,
+                "y": 436.66666666666663
+            }
         }
     },
     "last.imagePath": "D:/Development/C++/VC Projects/SDLTest/tiled",
@@ -66,12 +82,22 @@
     "map.width": 90,
     "openFiles": [
         "level0.tmx",
-        "Overworld.tsx"
+        "Overworld.tsx",
+        "level1.tmx",
+        "level2.tmx",
+        "DemoTileset.tmx",
+        "dungeon.tsx",
+        "Terrian.tsx"
     ],
     "project": "Maps.tiled-project",
     "recentFiles": [
+        "level0.tmx",
         "Overworld.tsx",
-        "level0.tmx"
+        "level1.tmx",
+        "Terrian.tsx",
+        "dungeon.tsx",
+        "DemoTileset.tmx",
+        "level2.tmx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {

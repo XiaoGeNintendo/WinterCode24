@@ -24,6 +24,7 @@ private:
 
 	Sprite* diffMarker;
 
+	Sprite* hero;
 public:
 	void init() override;
 
