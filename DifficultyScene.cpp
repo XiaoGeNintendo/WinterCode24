@@ -62,6 +62,7 @@ void DifficultyScene::init() {
 	hero->pivot = { 0.5,0.5 };
 	hero->position = { 100,190 };
 	hero->setClick([=]() {
+		am.playSE("click");
 		currentHero = (currentHero + 1) % HERO_COUNT;
 		hero->texture = am[heros[currentHero].id + "_t"];
 	});
@@ -81,6 +82,7 @@ void DifficultyScene::init() {
 	backBtn->pivot = { 0,1 };
 	backBtn->position = { 225,220 };
 	backBtn->setClick([&]() {
+		am.playSE("cancel");
 		scenes.back();
 		});
 	bg->addChild(backBtn);

@@ -161,7 +161,7 @@ private:
 		pauseBtn = new Sprite(am["setting"]);
 		pauseBtn->position = { SCREEN_WIDTH/2,SCREEN_HEIGHT-30 };
 		pauseBtn->pivot = { 0.5,0.5 };
-		pauseBtn->setClick([=]() {dialogBg->visible = true; settingDialog->visible = true; });
+		pauseBtn->setClick([=]() {am.playSE("click"); dialogBg->visible = true; settingDialog->visible = true; });
 		fgGroup->addChild(pauseBtn);
 
 		dialogBg = new Sprite(am["globalmask"]);
@@ -683,6 +683,7 @@ private:
 				assert(openingUi != -1);
 				assert(towerInstances[openingUi] == NULL);
 
+				am.playSE("build");
 				if (playerGold < towers[i]->price) {
 					auto now = standbyPos;
 
@@ -715,6 +716,7 @@ private:
 						return;
 					}
 
+					am.playSE("buildmenu");
 					//close previous menu
 					buildUi->visible = false;
 					assemblyIndicator->visible = false;
@@ -793,10 +795,14 @@ private:
 			deployer[i]->position = lvl.deployPosition[i];
 			deployer[i]->setClick([=]() {
 				if (openingUi == i) {
+					am.playSE("cancel");
 					buildUi->visible=false;
 					openingUi = -1;
 					return;
 				}
+
+				am.playSE("buildmenu");
+
 				//close previous menu
 				upgradeUi->visible = false;
 				radiusCircle->visible = false;
@@ -829,6 +835,7 @@ private:
 			upgradeIcons[0]->setClick([=]() {
 				assert(towerInstances[openingUi] != NULL);
 
+				am.playSE("build");
 				//remove all soldiers
 				for (auto& s : soldiers) {
 					if (!s.noProcess && s.from == openingUi) {
@@ -890,11 +897,13 @@ private:
 				assert(towerInstances[openingUi] != NULL);
 				auto ti = towerInstances[openingUi];
 				if (ti->level - 1 >= int(ti->upgradeCost.size())) {
+					am.playSE("nope");
 					tooltipText->text = "Level Max!";
 					tooltipText->markDirty();
 					return;
 				}
 				if (playerGold < ti->upgradeCost[ti->level - 1]) {
+					am.playSE("nope");
 					tooltipText->text = "Not enough gold!";
 					tooltipText->markDirty();
 					return;
@@ -904,6 +913,7 @@ private:
 				playerGold -= ti->upgradeCost[ti->level - 1];
 				ti->level++;
 				ti->upgrade();
+				am.playSE("upgrade");
 
 				//setup tower marks
 				auto& pt = towerMarks[openingUi];
@@ -956,6 +966,7 @@ private:
 			upgradeIcons[2]->pivot = { 0.5,0.5 };
 			upgradeIcons[2]->setClick([=]() {
 				//close ui
+				am.playSE("cancel");
 				upgradeUi->visible = false;
 				radiusCircle->visible = false;
 				assemblyIndicator->visible = false;
@@ -985,6 +996,8 @@ private:
 					return;
 				}
 
+				am.playSE("click");
+
 				auto st = (SoldierTower*)ti;
 
 				upgradeUi->visible = false;
@@ -997,6 +1010,7 @@ private:
 					auto expt = getMousePosition() - bgGroup->position;
 
 					if (!fine(expt)) {
+						am.playSE("nope");
 						tooltipText->text = "Invalid position!";
 						tooltipText->markDirty();
 						return;
@@ -1056,8 +1070,11 @@ private:
 		fireballSkill->position = VecI(50, 520);
 		fireballSkill->setClick([=]() {
 			if (fireballTime > 0) {
+				am.playSE("nope");
 				return;
 			}
+
+			am.playSE("click");
 
 			if (!globalMask->visible) {
 				globalMask->visible = true;
@@ -1089,8 +1106,12 @@ private:
 		reinforceSkill->position = VecI(120, 520);
 		reinforceSkill->setClick([=]() {
 			if (reinforceTime > 0) {
+				am.playSE("nope");
 				return;
 			}
+
+			am.playSE("click");
+
 			if (!globalMask->visible) {
 				globalMask->visible = true;
 				selectedSkill = 2;
@@ -1127,12 +1148,16 @@ private:
 		heroIcon->pivot = { 0.5,0.5 };
 		heroIcon->setClick([=]() {
 			if (!globalMask->visible) {
+				am.playSE("click");
+
 				globalMask->visible = true;
 				selectedSkill = 3;
 				tooltipText->text = "Redeploy "+heros[currentHero].name;
 				tooltipText->markDirty();
 				tooltipWindow->visible = true;
 			} else {
+				am.playSE("cancel");
+
 				globalMask->visible = false;
 				tooltipWindow->visible = false;
 			}
@@ -1254,7 +1279,11 @@ private:
 
 			x->setClick([=]() {
 				if (currentWave==-1 || currentWave!=lvl.waves.size() && nextEnemy==lvl.waves[currentWave].enemies.size() && currentWave != lvl.waves.size() - 1) {
+					am.playSE("nope");
 					nextWaveCountdown = 0;
+				}
+				else {
+					am.playSE("nope");
 				}
 			});
 			enemyMarkSpriteGroup->addChild(x);
@@ -1638,6 +1667,7 @@ public:
 			assert(selectedSkill != 0);
 			if (selectedSkill == 1) {
 				//fireball
+				am.playSE("cv_fireball");
 				skillLeft = 60;
 				skillPos = getMousePosition() - bgGroup->position;
 				fireballTime = getFireballCD();
@@ -1646,11 +1676,13 @@ public:
 				//reinforce
 				skillPos = getMousePosition() - bgGroup->position;
 				if (!fine(skillPos)) {
+					am.playSE("nope");
 					tooltipText->text = "Invalid position!";
 					tooltipText->markDirty();
 					return;
 				}
 
+				am.playSE("cv_reinforce");
 				//COPIED FROM TOWERS. CHANGE BOTH REFERENCE!!
 				for (int i = 0; i < 3; i++) {
 					auto newSoldier = new Sprite(am.animation("farmer_w", 1, 2), 1e9);

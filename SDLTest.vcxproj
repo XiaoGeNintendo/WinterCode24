@@ -132,8 +132,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <ReferencePath>$(ReferencePath)</ReferencePath>
-    <LibraryPath>D:\Development\C++\VCLibs\SDL2_ttf-2.22.0\lib\x64;D:\Development\C++\VCLibs\SDL2_image-2.8.2\lib\x64;D:\Development\C++\VCLibs\SDL2-2.30.0\lib\x64;$(LibraryPath)</LibraryPath>
-    <IncludePath>D:\Development\C++\VCLibs\SDL2_ttf-2.22.0\include;D:\Development\C++\VCLibs\SDL2_image-2.8.2\include;D:\Development\C++\VCLibs\SDL2-2.30.0\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\Development\C++\VCLibs\SDL2_mixer-2.8.0\lib\x64;D:\Development\C++\VCLibs\SDL2_ttf-2.22.0\lib\x64;D:\Development\C++\VCLibs\SDL2_image-2.8.2\lib\x64;D:\Development\C++\VCLibs\SDL2-2.30.0\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\Development\C++\VCLibs\SDL2_ttf-2.22.0\include;D:\Development\C++\VCLibs\SDL2_mixer-2.8.0\include;D:\Development\C++\VCLibs\SDL2_image-2.8.2\include;D:\Development\C++\VCLibs\SDL2-2.30.0\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -176,7 +176,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_mixer.lib;SDL2_image.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

@@ -48,6 +48,62 @@ Texture* AssetManager::generateString(string font, int size, string text, SDL_Co
 	return texture;
 }
 
+void AssetManager::loadSE(string name, string path)
+{
+	auto x = Mix_LoadWAV(path.c_str());
+	if (x == NULL)
+	{
+		printf("Fatal: Failed to load sound effect %s! SDL_mixer Error: %s\n", name.c_str(),Mix_GetError());
+		exit(ERR_LOAD_SE);
+	}
+
+	printf("SUCCESS: Loaded SE:%s\n", name.c_str());
+	se[name] = x;
+}
+
+void AssetManager::loadMusic(string name, string path)
+{
+	auto x = Mix_LoadMUS(path.c_str());
+	if (x == NULL)
+	{
+		printf("Fatal: Failed to load sound effect %s! SDL_mixer Error: %s\n", name.c_str(), Mix_GetError());
+		exit(ERR_LOAD_MUSIC);
+	}
+
+	printf("SUCCESS: Loaded Music:%s\n", name.c_str());
+	music[name] = x;
+}
+
+Mix_Music* AssetManager::m(string name)
+{
+	assert(music.count(name));
+	return music[name];
+}
+
+Mix_Chunk* AssetManager::s(string name)
+{
+	assert(se.count(name));
+	return se[name];
+}
+
+void AssetManager::playSE(string name)
+{
+	Mix_PlayChannel(-1, se[name], 0);
+}
+
+void AssetManager::playMus(string name) {
+	if (Mix_PlayingMusic()) {
+		Mix_HaltMusic();
+	}
+
+	Mix_PlayMusic(music[name],-1);
+}
+
+void AssetManager::stopMus() {
+	if (Mix_PlayingMusic()) {
+		Mix_FadeOutMusic(500);
+	}
+}
 
 void AssetManager::load(string name, string path) {
 	Texture* t=new Texture();
@@ -118,6 +174,12 @@ void AssetManager::close() {
 	loadedTexture.clear();
 	for (auto x : loadedFont) {
 		TTF_CloseFont(x.second);
+	}
+	for (auto m : music) {
+		Mix_FreeMusic(m.second);
+	}
+	for (auto s : se) {
+		Mix_FreeChunk(s.second);
 	}
 	loadedFont.clear();
 	fontLookup.clear();

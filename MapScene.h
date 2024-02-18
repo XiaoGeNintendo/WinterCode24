@@ -27,6 +27,9 @@ public:
 	void recoverState();
 
 	void init() override {
+
+		am.playMus("map");
+
 		bgGroup = new Actor();
 
 		//add background
@@ -51,6 +54,7 @@ public:
 		backBtn->pivot = { 0,1 };
 		backBtn->position = { 50,SCREEN_HEIGHT / 7 * 6 };
 		backBtn->setClick([&]() {
+			am.playSE("cancel");
 			recoverState();
 		});
 		fgGroup->addChild(backBtn);
@@ -73,6 +77,7 @@ public:
 			x->color.a = 0;
 			x->position = levelPos[i];
 			x->setClick([=]() {
+				am.playSE("paper");
 				currentLevel = i;
 				scenes.add(new DifficultyScene());
 				});

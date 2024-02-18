@@ -1,5 +1,6 @@
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_mixer.h>
 #include <stdio.h>
 #include <string>
 #include "GraphicsConstant.h"
@@ -19,7 +20,7 @@ SDL_Event e;
 
 bool init() {
 	//Initialize SDL
-	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
 		printf("Fatal: SDL could not initialize! SDL Error: %s\n", SDL_GetError());
 		exit(ERR_SDL_INIT);
 	}
@@ -62,6 +63,12 @@ bool init() {
 		exit(ERR_TTF_INIT);
 	}
 
+	//Initialize SDL_mixer
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+	{
+		printf("Fatal: SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
+		exit(ERR_MIX_INIT);
+	}
 	printf("Finished init!\n");
 	return true;
 }
@@ -146,6 +153,24 @@ void loadGame() {
 	am.preloadFont("global", "font/font.ttf");
 	am.preloadFont("damage", "font/damage.ttf");
 
+	//load music
+	am.loadMusic("title", "mus/title.wav");
+	am.loadMusic("map", "mus/map.wav");
+
+	am.loadSE("nope", "mus/nope.wav");
+	am.loadSE("build", "mus/build.wav");
+	am.loadSE("buildmenu", "mus/buildmenu.wav");
+	am.loadSE("open", "mus/open.wav");
+	am.loadSE("close", "mus/close.wav");
+	am.loadSE("paper", "mus/paper.wav");
+	am.loadSE("click", "mus/click.wav");
+	am.loadSE("cancel", "mus/cancel.wav");
+	am.loadSE("upgrade", "mus/upgrade.wav");
+
+	am.loadSE("cv_start", "mus/cv_start.wav");
+	am.loadSE("cv_fireball", "mus/cv_fireball.wav");
+	am.loadSE("cv_reinforce", "mus/cv_reinforce.wav");
+	am.loadSE("cv_assemble", "mus/cv_assemble.wav");
 	/* //test code here
 	Sprite* logo = new Sprite(am["zyq"]);
 	logo->position = VecI(50,50);
@@ -190,6 +215,7 @@ void close() {
 	gRenderer = NULL;
 
 	//Quit SDL subsystems
+	Mix_Quit();
 	IMG_Quit();
 	SDL_Quit();
 	TTF_Quit();

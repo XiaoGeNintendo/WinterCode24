@@ -69,6 +69,9 @@ public:
 				})
 			}
 		));
+
+		//play music
+		am.playMus("title");
 	}
 
 	void tick() override {

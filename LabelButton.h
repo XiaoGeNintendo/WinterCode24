@@ -28,6 +28,7 @@ public:
 	function<void()> fClick;
 
 	void click() override {
+		am.playSE("click");
 		fClick();
 	}
 

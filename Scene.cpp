@@ -63,6 +63,9 @@ void SceneManager::tick() {
 
 void SceneManager::set(Scene* scene)
 {
+	am.stopMus();
+	am.playSE("close");
+
 	//unbind mouse
 	scenes.back()->bgGroup->mousePolicy = 0;
 	scenes.back()->fgGroup->mousePolicy = 0;
@@ -92,6 +95,7 @@ void SceneManager::set(Scene* scene)
 			add(scene);
 		}),
 		adelay(60),
+		new ActionRunnable([=]() {am.playSE("open"); }),
 		apara({
 			amove(left,30,{0,0}, {-400,0}), //NOTE: BUG in action lazy to fix though
 			amove(right,30,{400,0}, {800,0})
