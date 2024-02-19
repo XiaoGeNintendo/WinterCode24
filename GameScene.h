@@ -55,7 +55,7 @@ private:
 			//check dead first
 			if (enemy.hp <= 0) {
 				//TODO Enemy dead
-
+				am.playSE("coin");
 				auto& s = enemySprites[enemy.id];
 
 				for (int j = 0; j < enemy.data->dropCoin/10; j++) {
@@ -117,12 +117,14 @@ private:
 
 						enemy.noProcess = true;
 
+						am.playSE("losehp");
 						if (playerHp == 0) {
+							am.stopMus();
+							am.playSE("dead");
 							dialogBg->visible = true;
 							gameoverDialog->visible = true;
 						}
 						continue;
-						//TODO player hp 0
 					}
 				}
 			}
@@ -153,6 +155,13 @@ private:
 				sp->flipX = false;
 			}
 
+		}
+
+		//showing boss hp
+		if(bossPointer!=-1){
+			bossLabel->text = "Kitsune " + to_string(enemyInstances[bossPointer].hp) + "/" + to_string(enemyInstances[bossPointer].maxhp);
+			bossLabel->markDirty();
+			bossBar2->size.x = WAVE_BAR_LENGTH * enemyInstances[bossPointer].hp / enemyInstances[bossPointer].maxhp;
 		}
 	}
 
@@ -338,7 +347,7 @@ private:
 			//test for dead first
 			if (soldier.hp <= 0) {
 				//TODO soldier dead
-
+				am.playSE("kill");
 				soldier.locator->removeFromParent();
 				delete soldier.locator;
 				soldier.noProcess = true;
@@ -410,6 +419,8 @@ private:
 				soldier.attackTimer--;
 				if (soldier.attackTimer < 0) {
 					soldier.attackTimer = 60;
+
+					am.playSE("sword");
 					auto& atk = enemyInstances[soldier.fighting];
 					int dmg = max(0, (soldier.atk - atk.data->defense) * (heroPointer == i && randInt(1, 4) == 1 && currentHero == 0 ? 2 : 1));
 					atk.hp -= dmg; //momiji fight master
@@ -458,7 +469,8 @@ private:
 		if (heroInstance.cd > 0) {
 			heroInstance.cd--;
 		}
-		if (heroInstance.cd <= 0) {
+		if (heroInstance.cd <= 0 && !soldiers[heroPointer].noProcess) {
+			int healCount = 0;
 			if (currentHero == 0) {
 				//momiji
 				for (auto& s : soldiers) {
@@ -471,9 +483,13 @@ private:
 					if (dist <= ASSEMBLY_RANGE) {
 						s.hp = min(s.hp + 5 + heroInstance.lvl * 5, s.maxhp);
 						displayHeal(i2d(s.locator->position),5 + heroInstance.lvl * 5);
+						healCount++;
 					}
 				}
 
+				if (healCount > 1) {
+					am.playSE("heal");
+				}
 				heroInstance.cd = max(300 - heroInstance.lvl * 20, 60);
 			}
 			else if (currentHero == 1) {
@@ -495,6 +511,7 @@ private:
 						bomb->realPosition = shootPos;
 						bomb->size = bomb->size * 2;
 						bomb->ignite = [=]() {
+							heroInstance.exp++;
 							for (auto& enemy : enemyInstances) {
 								if (enemy.noProcess) {
 									continue;
@@ -531,8 +548,9 @@ private:
 			}
 		}
 
-		if (heroInstance.exp >= 30) {
-			heroInstance.exp -= 30;
+		const int requiredExp = difficultySelect(8, 10, 12, 12);
+		if (heroInstance.exp >= requiredExp) {
+			heroInstance.exp -= requiredExp;
 			heroInstance.lvl++;
 			soldiers[heroPointer].atk += 5;
 		}
@@ -541,7 +559,7 @@ private:
 		heroLevel->markDirty();
 		
 		heroHpBar->size.x = 40 * soldiers[heroPointer].hp / getHeroMaxhp();
-		heroExpBar->size.x = 40 * heroInstance.exp / 30;
+		heroExpBar->size.x = 40 * heroInstance.exp / requiredExp;
 	}
 
 	bool fine(VecI x) {
@@ -602,11 +620,15 @@ private:
 			nextEnemy = 0;
 			nextWaveCountdown = currentWave == lvl.waves.size()-1 ? 1e9 : lvl.waves[currentWave + 1].length;
 			nextEnemyCountdown = lvl.waves[currentWave].delay;
+
+			am.playSE("drum");
 		}
 		nextEnemyCountdown--;
 		if (nextEnemyCountdown <= 0) {
 			if (currentWave != lvl.waves.size() && nextEnemy != lvl.waves[currentWave].enemies.size()) {
 				printf("Generating %s\n", lvl.waves[currentWave].enemies[nextEnemy].c_str());
+
+			
 				//generate enemy
 				auto instance = EnemyInstance();
 				instance.data = &lvl.enemies[lvl.waves[currentWave].enemies[nextEnemy]];
@@ -621,6 +643,7 @@ private:
 				//generate sprite
 				auto enemySprite = new Sprite(am.animation(instance.data->id + "_w", 1, instance.data->wac), 20);
 				enemySprite->color.a = 0;
+				enemySprite->pivot = { 0.5,0.5 };
 				actions.add(aseq({ aalpha(enemySprite, 60, 255), new ActionRunnable([=]() {
 					enemySprite->addChild(generateHpBar()); }) }));
 				
@@ -631,6 +654,11 @@ private:
 				nextEnemy++;
 				nextEnemyCountdown = lvl.waves[currentWave].delay;
 
+				if (instance.data->boss) {
+					bossPointer = instance.id;
+					bossIndicator->visible = true;
+					am.playMus("level2b");
+				}
 				if (nextEnemy == lvl.waves[currentWave].enemies.size()) {
 					actions.add(aseq({
 						apara({amove(waveLabel,30,VecI(0,0),VecI(-50,0)),aalpha(waveLabel,30,0)}),
@@ -652,8 +680,10 @@ private:
 			}
 
 			if (ok) {
-				//dialogBg->visible = true;
-				//winDialog->visible = true;
+				am.stopMus();
+				am.playSE("win");
+				dialogBg->visible = true;
+				winDialog->visible = true;
 			}
 		}
 	}
@@ -683,8 +713,9 @@ private:
 				assert(openingUi != -1);
 				assert(towerInstances[openingUi] == NULL);
 
-				am.playSE("build");
 				if (playerGold < towers[i]->price) {
+					am.playSE("nope");
+
 					auto now = standbyPos;
 
 					actions.add(aseq(
@@ -698,6 +729,7 @@ private:
 					return;
 				}
 
+				am.playSE("build");
 				playerGold -= towers[i]->price;
 
 				towerInstances[openingUi] = towersCreateFunction[i]();
@@ -1016,9 +1048,9 @@ private:
 						return;
 					}
 
+					am.playSE("oo");
+
 					st->assemblyPosition = expt;
-
-
 					for (auto& s : soldiers) {
 						if (s.noProcess) {
 							continue;
@@ -1074,9 +1106,8 @@ private:
 				return;
 			}
 
-			am.playSE("click");
-
 			if (!globalMask->visible) {
+				am.playSE("click");
 				globalMask->visible = true;
 				selectedSkill = 1;
 				tooltipText->text = "Select Position";
@@ -1084,6 +1115,7 @@ private:
 				tooltipWindow->visible = true;
 			}
 			else {
+				am.playSE("cancel");
 				globalMask->visible = false;
 				tooltipWindow->visible = false;
 			}
@@ -1110,9 +1142,8 @@ private:
 				return;
 			}
 
-			am.playSE("click");
-
 			if (!globalMask->visible) {
+				am.playSE("click");
 				globalMask->visible = true;
 				selectedSkill = 2;
 				tooltipText->text = "Select Position";
@@ -1120,6 +1151,7 @@ private:
 				tooltipWindow->visible = true;
 			}
 			else {
+				am.playSE("cancel");
 				globalMask->visible = false;
 				tooltipWindow->visible = false;
 			}
@@ -1137,6 +1169,94 @@ private:
 		fgGroup->addChild(reinforceSkill);
 	}
 
+	int bs1 = 768;
+	int bs2 = 1259;
+	void tickBoss() {
+		if (bossPointer == -1) {
+			return;
+		}
+
+		auto& boss = enemyInstances[bossPointer];
+		if (boss.state == ENEMY_WALKING) {
+			//skill 1: heal
+			if (bs1 > 0) {
+				bs1--;
+			}
+
+			if (bs1 == 0) {
+				for (auto& e : enemyInstances) {
+					if (!e.noProcess) {
+						displayHeal(e.position, 10);
+						e.hp = min(e.hp + 10, e.maxhp);
+					}
+				}
+				displayHeal(boss.position, 200);
+				boss.hp = min(boss.hp + 200, boss.maxhp);
+				am.playSE("heal");
+				bs1 = randInt(60 * 6, 60 * 10);
+			}
+
+			//skill 2: generate tama
+			if (bs2 > 0) {
+				bs2--;
+			}
+
+			if (bs2 == 0) {
+				int totcnt = difficultySelect(3, 3, 4, 4);
+				//add new projectile
+				for (int i = 0; i < totcnt; i++) {
+					Sprite* arrow = new Sprite(am["tama"]);
+					arrow->position = d2i(boss.position);
+
+					double angle = 2 * PI / totcnt * i;
+					VecD delta = VecD(cos(angle), sin(angle))*90;
+					
+					actions.add(aseq({
+						amove(arrow,30,arrow->position+d2i(delta)),
+						adelay(60*(10+i*2)),
+						new ActionRunnable([=]() {
+							int best = 1e9;
+							int bestId=-1;
+							for (int i = 0; i < soldiers.size();i++) {
+								auto& s = soldiers[i];
+								if (!s.noProcess) {
+									int dist = (s.locator->position - arrow->position).magnitude();
+									if (dist < best) {
+										best = dist;
+										bestId = i;
+									}
+								}
+							}
+
+							if (bestId != -1) {
+								actions.add(aseq({ amove(arrow, 10, soldiers[bestId].locator->position), new ActionRunnable([=]() {
+									soldiers[bestId].hp -= 90;
+									displayDamage(soldiers[bestId].locator->position, 90);
+									}),aremove(arrow) }));
+							}
+							else if (!boss.noProcess) {
+
+									actions.add(aseq({ amove(arrow, 10, d2i(boss.position)), new ActionRunnable([=]() {
+										enemyInstances[bossPointer].hp = max(boss.hp+200,boss.maxhp);
+										displayHeal(boss.position, 200);
+										}),aremove(arrow) }));
+							}
+							else {
+								actions.add(aremove(arrow));
+							}
+						})
+					}));
+
+					projectileSpriteGroup->addChild(arrow);
+
+				}
+
+				am.playSE("laser");
+				bs2 = randInt(60 * 15, 60 * 30);
+			}
+		}
+	}
+
 	void initHero() {
 		heroBg = new Sprite(am["herobg"]);
 		heroBg->pivot = { 0.5,0.5 };
@@ -1147,7 +1267,12 @@ private:
 		heroIcon->position = { 0,0 };
 		heroIcon->pivot = { 0.5,0.5 };
 		heroIcon->setClick([=]() {
+			
 			if (!globalMask->visible) {
+				if (soldiers[heroPointer].hp <= 0) {
+					am.playSE("nope");
+					return;
+				}
 				am.playSE("click");
 
 				globalMask->visible = true;
@@ -1181,6 +1306,7 @@ private:
 		//generate hero itself
 		auto newSoldier = new Sprite(am.animation(heros[currentHero].id + "_w", 1, heros[currentHero].wac), 1e9);
 		newSoldier->position = lvl.path[0].back();
+		newSoldier->pivot = { 0.5,0.5 };
 		newSoldier->addChild(generateHpBar());
 		projectileSpriteGroup->addChild(newSoldier);
 
@@ -1232,8 +1358,10 @@ private:
 							int dmg = difficultySelect(60, 50, 40, 30);
 							e->hp -= dmg; //remove enemy hp
 							displayDamage(e->position, dmg);
+
 						}
 
+						am.playSE("boom");
 						arrow->removeFromParent();
 						delete arrow;
 					})
@@ -1346,6 +1474,12 @@ public:
 	Sprite* waveBar2;
 	Actor* waveIndicator;
 
+	//boss indicator
+	Label* bossLabel;
+	Sprite* bossBar1;
+	Sprite* bossBar2;
+	Actor* bossIndicator;
+
 	Sprite* previewBox;
 	Sprite* previewSprites[16];
 	Label* previewHint;
@@ -1364,6 +1498,8 @@ public:
 	HeroInstance heroInstance;
 	int heroPointer;
 
+	int bossPointer = -1;
+
 	int playerHp = 20;
 	int playerGold = 0;
 
@@ -1377,7 +1513,7 @@ public:
 	Actor* generateHpBar() {
 		auto bar1 = new Sprite(am["hpbar1"]);
 		auto bar2 = new Sprite(am["hpbar2"]);
-		bar1->position = VecI(6, -2);
+		bar1->position = VecI(-10,-20);
 		bar1->addChild(bar2);
 		return bar1;
 	}
@@ -1502,6 +1638,10 @@ public:
 	}
 
 	void init() override {
+
+		am.playMus("level" + to_string(currentLevel));
+		
+
 		bgGroup = new Actor();
 		fgGroup = new Actor();
 		lvl = levels[currentLevel];
@@ -1658,6 +1798,25 @@ public:
 		waveBar2->size.x = WAVE_BAR_LENGTH;
 		waveIndicator->addChild(waveBar2);
 
+		//init boss indicator
+		bossIndicator = new Actor();
+		bossIndicator->position = VecI(350, 70);
+		bossIndicator->visible = false;
+		fgGroup->addChild(bossIndicator);
+
+		bossLabel = new Label("global", 16, "Kitsune ??/?? HP", { 0,0,0,255 });
+		bossIndicator->addChild(bossLabel);
+
+		bossBar1 = new Sprite(am["hpbar1"]);
+		bossBar1->position = VecI(0, 20);
+		bossBar1->size.x = WAVE_BAR_LENGTH;
+		bossIndicator->addChild(bossBar1);
+
+		bossBar2 = new Sprite(am["hpbar2"]);
+		bossBar2->position = VecI(0, 20);
+		bossBar2->size.x = WAVE_BAR_LENGTH;
+		bossIndicator->addChild(bossBar2);
+
 		initHero();
 
 		//must put last. global mask
@@ -1682,7 +1841,7 @@ public:
 					return;
 				}
 
-				am.playSE("cv_reinforce");
+				am.playSE("oo");
 				//COPIED FROM TOWERS. CHANGE BOTH REFERENCE!!
 				for (int i = 0; i < 3; i++) {
 					auto newSoldier = new Sprite(am.animation("farmer_w", 1, 2), 1e9);
@@ -1690,7 +1849,7 @@ public:
 					auto targetPos = skillPos + VecI(randInt(-20, 20), randInt(10, 20));
 					newSoldier->position = targetPos - VecI(0, 50);
 					newSoldier->color.a = 0;
-
+					newSoldier->pivot = { 0.5,0.5 };
 					newSoldier->addChild(generateHpBar());
 					projectileSpriteGroup->addChild(newSoldier);
 
@@ -1715,11 +1874,13 @@ public:
 				//hero move
 				skillPos = getMousePosition() - bgGroup->position;
 				if (!fine(skillPos)) {
+					am.playSE("nope");
 					tooltipText->text = "Invalid position!";
 					tooltipText->markDirty();
 					return;
 				}
 
+				am.playSE("click");
 				soldiers[heroPointer].assemblyPoint = skillPos;
 				soldiers[heroPointer].state = SOLDIER_RETREATING;
 				soldiers[heroPointer].steps = pathfind(soldiers[heroPointer].locator->position, skillPos,false);
@@ -1747,6 +1908,8 @@ public:
 		tickSkill();
 
 		tickHero();
+
+		tickBoss();
 
 		//ticking towers
 		for (auto x : towerInstances) {

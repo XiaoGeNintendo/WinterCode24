@@ -41,7 +41,7 @@ VecI Actor::getRenderPosition()
 
 void Actor::addChild(Actor* son){
 
-	printf("Add child: %p to %p\n", son, this);
+	//printf("Add child: %p to %p\n", son, this);
 	son->parent = this;
 	children.push_back(son);
 	sort(children.begin(), children.end(), compareChildren);

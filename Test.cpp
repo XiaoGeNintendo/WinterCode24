@@ -122,6 +122,7 @@ void loadGame() {
 	am.load("setting", "img/setting.png");
 	am.load("null", "img/null.png");
 	am.load("herobg", "img/herobg.png");
+	am.load("tama", "img/tama.png");
 
 	for (int i = 1; i <= 4; i++) {
 		am.load("flag" + to_string(i), "img/flag" + to_string(i) + ".png");
@@ -148,7 +149,7 @@ void loadGame() {
 	am.loadEnemy("ske", 2, 5);
 	am.loadEnemy("momiji", 3, 3,true);
 	am.loadEnemy("nitori", 3, 3, true);
-
+	am.loadEnemy("fox", 3, 2, true);
 	//load fonts
 	am.preloadFont("global", "font/font.ttf");
 	am.preloadFont("damage", "font/damage.ttf");
@@ -156,6 +157,10 @@ void loadGame() {
 	//load music
 	am.loadMusic("title", "mus/title.wav");
 	am.loadMusic("map", "mus/map.wav");
+	am.loadMusic("level0", "mus/level0.wav");
+	am.loadMusic("level1", "mus/level1.wav");
+	am.loadMusic("level2", "mus/level2.wav");
+	am.loadMusic("level2b", "mus/level2b.wav");
 
 	am.loadSE("nope", "mus/nope.wav");
 	am.loadSE("build", "mus/build.wav");
@@ -166,6 +171,18 @@ void loadGame() {
 	am.loadSE("click", "mus/click.wav");
 	am.loadSE("cancel", "mus/cancel.wav");
 	am.loadSE("upgrade", "mus/upgrade.wav");
+	am.loadSE("oo", "mus/oo.wav");
+	am.loadSE("drum", "mus/drum.wav");
+	am.loadSE("sword", "mus/sword.wav");
+	am.loadSE("dead", "mus/dead.wav");
+	am.loadSE("win", "mus/win.wav");
+	am.loadSE("coin", "mus/coin.wav");
+	am.loadSE("boom", "mus/boom.wav");
+	am.loadSE("kill", "mus/kill.wav");
+	am.loadSE("arrow", "mus/arrow.wav");
+	am.loadSE("losehp", "mus/losehp.wav");
+	am.loadSE("heal", "mus/heal.wav");
+	am.loadSE("laser", "mus/laser.wav");
 
 	am.loadSE("cv_start", "mus/cv_start.wav");
 	am.loadSE("cv_fireball", "mus/cv_fireball.wav");
@@ -188,7 +205,7 @@ void loadGame() {
 	loadLevelInfos();
 
 	scenes.add(new TitleScene());
-	//currentLevel = 1;
+	//currentLevel = 2;
 	//currentHero = 1;
 	//scenes.add(new GameScene()); //test only
 

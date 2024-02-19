@@ -2,6 +2,8 @@
 #include "GameScene.h"
 
 void DifficultyScene::init() {
+	currentDifficulty = 0;
+
 	bgGroup = new Actor();
 	fgGroup = new Actor();
 

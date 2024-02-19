@@ -29,7 +29,7 @@ void SoldierTower::tick()
 		auto targetPos= this->position + VecI(randInt(-20, 20), randInt(10, 20));
 		newSoldier->position = targetPos - VecI(0, 50);
 		newSoldier->color.a = 0;
-
+		newSoldier->pivot = { 0.5,0.5 };
 		newSoldier->addChild(sc->generateHpBar());
 		sc->projectileSpriteGroup->addChild(newSoldier);
 
@@ -108,6 +108,7 @@ void ArcherTower::tick()
 							sc->displayDamage(e->position, dmg);
 						}
 
+						am.playSE("arrow");
 						arrow->removeFromParent();
 						delete arrow;
 					})
@@ -178,7 +179,7 @@ void BomberTower::tick()
 				bomb->texture = am["boom"];
 				bomb->size = am["boom"]->size();
 				actions.add(aseq({ aalpha(bomb,30,0),new ActionRunnable([=]() {bomb->removeFromParent(); delete bomb; }) }));
-
+				am.playSE("boom");
 			};
 			sc->projectileSpriteGroup->addChild(bomb);
 			lastBomb = (60 * 3 - 30 * level)/sc->getHeroBonus(position);

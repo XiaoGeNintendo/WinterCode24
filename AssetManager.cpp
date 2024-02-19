@@ -10,7 +10,7 @@ void AssetManager::preloadFont(string name, string path){
 
 Texture* AssetManager::generateString(string font, int size, string text, SDL_Color color)
 {
-	string textId = "f_" + font + "#" + to_string(size) + "@" + text;
+	string textId = "f_" + font + "#" + to_string(size) + "@" + text + "-" + to_string(color.r) + "-" + to_string(color.g) + "-" + to_string(color.b);
 	if (loadedTexture.count(textId)) {
 		return loadedTexture[textId];
 	}
@@ -88,10 +88,12 @@ Mix_Chunk* AssetManager::s(string name)
 
 void AssetManager::playSE(string name)
 {
+	assert(se.count(name));
 	Mix_PlayChannel(-1, se[name], 0);
 }
 
 void AssetManager::playMus(string name) {
+	assert(music.count(name));
 	if (Mix_PlayingMusic()) {
 		Mix_HaltMusic();
 	}

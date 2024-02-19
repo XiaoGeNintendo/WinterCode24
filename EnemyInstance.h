@@ -22,7 +22,6 @@ struct EnemyInstance {
 	vector<int> fighting;
 	int attackTimer;
 	bool noProcess;
-
 	//effects
 	int slowdownTimer;
 };

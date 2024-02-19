@@ -49,8 +49,9 @@ struct EnemyData {
 	int wac=2;
 	//attacking animation count
 	int aac=2;
-	bool thumbnail=false;
+	bool thumbnail = false;
 	bool blockable = true;
+	bool boss = false;
 	
 	EnemyData() {}
 
