@@ -65,6 +65,10 @@ void SceneManager::set(Scene* scene)
 {
 	am.stopMus();
 	am.playSE("close");
+	for (auto x : actions.actions) {
+		delete x;
+	}
+	actions.actions.clear();
 
 	//unbind mouse
 	scenes.back()->bgGroup->mousePolicy = 0;

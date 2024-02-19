@@ -469,6 +469,9 @@ private:
 		if (heroInstance.cd > 0) {
 			heroInstance.cd--;
 		}
+		if (soldiers[heroPointer].noProcess) {
+			heroDead->visible = true;
+		}
 		if (heroInstance.cd <= 0 && !soldiers[heroPointer].noProcess) {
 			int healCount = 0;
 			if (currentHero == 0) {
@@ -530,6 +533,7 @@ private:
 								}
 							}
 
+							am.playSE("boom");
 							bomb->texture = am["boom"];
 							bomb->size = am["boom"]->size();
 							actions.add(aseq({ aalpha(bomb,30,0),new ActionRunnable([=]() {bomb->removeFromParent(); delete bomb; }) }));
@@ -1175,8 +1179,13 @@ private:
 		if (bossPointer == -1) {
 			return;
 		}
-
+		
 		auto& boss = enemyInstances[bossPointer];
+		if (boss.noProcess) {
+			bossIndicator->visible = false;
+			return;
+		}
+
 		if (boss.state == ENEMY_WALKING) {
 			//skill 1: heal
 			if (bs1 > 0) {
@@ -1237,7 +1246,7 @@ private:
 							else if (!boss.noProcess) {
 
 									actions.add(aseq({ amove(arrow, 10, d2i(boss.position)), new ActionRunnable([=]() {
-										enemyInstances[bossPointer].hp = max(boss.hp+200,boss.maxhp);
+										enemyInstances[bossPointer].hp = min(boss.hp+200,boss.maxhp);
 										displayHeal(boss.position, 200);
 										}),aremove(arrow) }));
 							}
@@ -1263,6 +1272,7 @@ private:
 		heroBg->position = { 50,120 };
 		fgGroup->addChild(heroBg);
 
+		
 		heroIcon = new Sprite(am[heros[currentHero].id + "_t"]);
 		heroIcon->position = { 0,0 };
 		heroIcon->pivot = { 0.5,0.5 };
@@ -1289,7 +1299,13 @@ private:
 		});
 
 		heroBg->addChild(heroIcon);
-		
+
+		heroDead = new Sprite(am["no"]);
+		heroDead->pivot = { 0.5,0.5 };
+		heroDead->position = { -12,-12 };
+		heroDead->visible = false;
+		heroBg->addChild(heroDead);
+
 		heroLevel = new Label("global", 16, "1", { 0,0,255,255 });
 		heroLevel->position = { 16,12 };
 		heroBg->addChild(heroLevel);
@@ -1491,6 +1507,7 @@ public:
 	Sprite* pauseBtn;
 
 	Sprite* heroBg;
+	Sprite* heroDead;
 	Sprite* heroIcon;
 	Label* heroLevel;
 	Sprite* heroHpBar;

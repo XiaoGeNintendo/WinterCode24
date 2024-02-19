@@ -15,6 +15,11 @@ private:
 	LabelButton* startBtn;
 	LabelButton* exitBtn;
 
+	Sprite* mus;
+	Sprite* se;
+	Sprite* musoff;
+	Sprite* seoff;
+
 public:
 	void init() override {
 		bgGroup = new Actor();
@@ -52,6 +57,53 @@ public:
 		};
 		fgGroup->addChild(exitBtn);
 
+		//mus and se
+		mus = new Sprite(am["music"]);
+		mus->position = { SCREEN_WIDTH / 18 * 14,SCREEN_HEIGHT / 13 * 12 };
+		mus->pivot = { 0.5,0.5 };
+		mus->setClick([=]() {
+			save.bgm = !save.bgm;
+			musoff->visible = !save.bgm;
+			if (save.bgm) {
+				Mix_VolumeMusic(MIX_MAX_VOLUME);
+			}
+			else {
+				Mix_VolumeMusic(0);
+			}
+			saveSave();
+		});
+		fgGroup->addChild(mus);
+
+
+		se = new Sprite(am["se"]);
+		se->position = { SCREEN_WIDTH / 18 * 16,SCREEN_HEIGHT / 13 * 12 };
+		se->pivot = { 0.5,0.5 };
+		se->setClick([=]() {
+			save.se = !save.se;
+			seoff->visible = !save.se;
+			if (save.se) {
+				Mix_Volume(-1, MIX_MAX_VOLUME);
+				am.playSE("click");
+			}
+			else {
+				Mix_Volume(-1, 0);
+			}
+			saveSave();
+		});
+		fgGroup->addChild(se);
+
+		musoff = new Sprite(am["no"]);
+		musoff->position = { SCREEN_WIDTH / 18 * 14-10,SCREEN_HEIGHT / 13 * 12-10 };
+		musoff->pivot = { 0.5,0.5 };
+		musoff->visible = !save.bgm;
+		fgGroup->addChild(musoff);
+
+
+		seoff = new Sprite(am["no"]);
+		seoff->position = { SCREEN_WIDTH / 18 * 16-10,SCREEN_HEIGHT / 13 * 12-10 };
+		seoff->pivot = { 0.5,0.5 };
+		seoff->visible = !save.se;
+		fgGroup->addChild(seoff);
 
 		//animation
 		actions.add(aseq(

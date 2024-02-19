@@ -13,6 +13,7 @@
 #include "Timer.h"
 #include "TitleScene.h"
 #include "GameScene.h"
+#include "SplashScene.h"
 using namespace std;
 
 Stage st;
@@ -32,7 +33,7 @@ bool init() {
 	}
 
 	//Create window
-	gWindow = SDL_CreateWindow("My SDL App", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+	gWindow = SDL_CreateWindow("NJU University Rush", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 	if (gWindow == NULL)
 	{
 		printf("Fatal: Window could not be created! SDL Error: %s\n", SDL_GetError());
@@ -76,6 +77,8 @@ bool init() {
 void loadGame() {
 	//load game save
 	loadSave();
+	Mix_Volume(-1, save.se ? MIX_MAX_VOLUME : 0);
+	Mix_VolumeMusic(save.bgm ? MIX_MAX_VOLUME : 0);
 
 	//load assets
 	am.load("zyq", "img/son.png");
@@ -123,7 +126,10 @@ void loadGame() {
 	am.load("null", "img/null.png");
 	am.load("herobg", "img/herobg.png");
 	am.load("tama", "img/tama.png");
-
+	am.load("no", "img/no.png");
+	am.load("music", "img/music.png");
+	am.load("se", "img/se.png");
+	am.load("splash", "img/splash.png");
 	for (int i = 1; i <= 4; i++) {
 		am.load("flag" + to_string(i), "img/flag" + to_string(i) + ".png");
 	}
@@ -204,7 +210,7 @@ void loadGame() {
 	//load game content
 	loadLevelInfos();
 
-	scenes.add(new TitleScene());
+	scenes.add(new SplashScene());
 	//currentLevel = 2;
 	//currentHero = 1;
 	//scenes.add(new GameScene()); //test only
