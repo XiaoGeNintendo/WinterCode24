@@ -220,7 +220,8 @@ void MageTower::tick()
 		}
 
 		auto& x = sprites[enemy.id];
-		x->position = d2i(enemy.position) + VecI(10, 10);
+		x->pivot = { 0.5,0.5 };
+		x->position = d2i(enemy.position);
 
 		double dist = (enemy.position - i2d(this->position)).magnitude();
 		if (dist > radius) {
