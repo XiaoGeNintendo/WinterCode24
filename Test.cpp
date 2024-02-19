@@ -33,7 +33,7 @@ bool init() {
 	}
 
 	//Create window
-	gWindow = SDL_CreateWindow("NJU University Rush", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+	gWindow = SDL_CreateWindow("Nanjing University Rush", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 	if (gWindow == NULL)
 	{
 		printf("Fatal: Window could not be created! SDL Error: %s\n", SDL_GetError());
